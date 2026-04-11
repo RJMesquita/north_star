@@ -47,20 +47,20 @@ export function ProfileForm({
 
   return (
     <form
-      className="rounded-[2rem] border border-slate-200 bg-white/85 p-6 shadow-[0_20px_80px_rgba(15,23,42,0.08)] backdrop-blur"
+      className="rounded-[2rem] border border-white/10 bg-white/8 p-6 shadow-[0_20px_80px_rgba(0,0,0,0.22)] backdrop-blur-xl"
       onSubmit={(event) => {
         event.preventDefault();
         onSubmit(profile);
       }}
     >
       <div className="flex min-h-[13rem] flex-col xl:h-[15rem]">
-        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-orange-700">
+        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-300">
           Step 1
         </p>
-        <h2 className="mt-2 font-['Space_Grotesk'] text-2xl font-semibold text-slate-950">
+        <h2 className="mt-2 font-['Space_Grotesk'] text-2xl font-semibold text-white">
           Choose your conference focus
         </h2>
-        <p className="mt-4 text-sm leading-6 text-slate-600">
+        <p className="mt-4 text-sm leading-6 text-indigo-100/75">
           Tell us what you want from the event and we will favor sessions that
           fit your themes, preferred format, speaker interests, and schedule.
         </p>
@@ -93,7 +93,7 @@ export function ProfileForm({
         />
 
         <label className="grid gap-2">
-          <span className="text-sm font-semibold text-slate-900">
+          <span className="text-sm font-semibold text-white">
             Topics from the conference catalog
           </span>
           <select
@@ -102,7 +102,7 @@ export function ProfileForm({
             onChange={(event) =>
               updateField("keywords", getSelectedOptions(event))
             }
-            className="min-h-40 rounded-2xl border border-slate-200 bg-amber-50/60 px-4 py-3 text-sm text-slate-700 shadow-inner outline-none transition focus:border-orange-400"
+            className="min-h-40 rounded-2xl border border-white/10 bg-slate-950/30 px-4 py-3 text-sm text-indigo-50 shadow-inner outline-none transition focus:border-cyan-300"
           >
             {filters.keywords.map((keyword) => (
               <option key={keyword} value={keyword}>
@@ -110,13 +110,13 @@ export function ProfileForm({
               </option>
             ))}
           </select>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-indigo-100/55">
             Hold Ctrl or Cmd to choose multiple topics.
           </p>
         </label>
 
         <label className="grid gap-2">
-          <span className="text-sm font-semibold text-slate-900">
+          <span className="text-sm font-semibold text-white">
             Speakers you want to follow
           </span>
           <select
@@ -125,7 +125,7 @@ export function ProfileForm({
             onChange={(event) =>
               updateField("preferredSpeakers", getSelectedOptions(event))
             }
-            className="min-h-48 rounded-2xl border border-slate-200 bg-amber-50/60 px-4 py-3 text-sm text-slate-700 shadow-inner outline-none transition focus:border-orange-400"
+            className="min-h-48 rounded-2xl border border-white/10 bg-slate-950/30 px-4 py-3 text-sm text-indigo-50 shadow-inner outline-none transition focus:border-cyan-300"
           >
             {filters.speakers.map((speaker) => (
               <option key={speaker} value={speaker}>
@@ -136,7 +136,7 @@ export function ProfileForm({
         </label>
 
         <label className="grid gap-2">
-          <span className="text-sm font-semibold text-slate-900">
+          <span className="text-sm font-semibold text-white">
             Maximum duration (minutes)
           </span>
           <input
@@ -147,12 +147,12 @@ export function ProfileForm({
               updateField("maxDurationMinutes", event.target.value)
             }
             placeholder="45"
-            className="rounded-2xl border border-slate-200 bg-amber-50/60 px-4 py-3 text-sm text-slate-700 shadow-inner outline-none transition focus:border-orange-400"
+            className="rounded-2xl border border-white/10 bg-slate-950/30 px-4 py-3 text-sm text-indigo-50 shadow-inner outline-none transition focus:border-cyan-300"
           />
         </label>
 
         <fieldset className="grid gap-2">
-          <span className="text-sm font-semibold text-slate-900">
+          <span className="text-sm font-semibold text-white">
             Preferred time of day
           </span>
           <div className="flex flex-wrap gap-2">
@@ -162,8 +162,8 @@ export function ProfileForm({
                 type="button"
                 className={
                   profile.timePreference === option.value
-                    ? "rounded-full bg-slate-950 px-4 py-2 text-sm font-medium text-amber-50"
-                    : "rounded-full bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 transition hover:-translate-y-0.5"
+                    ? "rounded-full bg-gradient-to-r from-cyan-400 via-sky-400 to-fuchsia-500 px-4 py-2 text-sm font-medium text-slate-950 shadow-lg shadow-fuchsia-500/20"
+                    : "rounded-full border border-white/10 bg-white/10 px-4 py-2 text-sm font-medium text-indigo-50 transition hover:-translate-y-0.5 hover:bg-white/16"
                 }
                 onClick={() => updateField("timePreference", option.value)}
               >
@@ -175,7 +175,7 @@ export function ProfileForm({
       </div>
 
       <button
-        className="mt-6 inline-flex rounded-full bg-gradient-to-r from-orange-500 to-orange-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-orange-500/20 transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+        className="mt-6 inline-flex rounded-full bg-gradient-to-r from-cyan-400 via-sky-400 to-fuchsia-500 px-5 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-fuchsia-500/25 transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
         type="submit"
         disabled={isLoading}
       >
@@ -200,7 +200,7 @@ function FilterGroup({
 }: FilterGroupProps): JSX.Element {
   return (
     <fieldset className="grid gap-2">
-      <span className="text-sm font-semibold text-slate-900">{title}</span>
+      <span className="text-sm font-semibold text-white">{title}</span>
       <div className="flex flex-wrap gap-2">
         {options.map((option) => (
           <button
@@ -208,8 +208,8 @@ function FilterGroup({
             type="button"
             className={
               selectedValues.includes(option)
-                ? "rounded-full bg-slate-950 px-4 py-2 text-sm font-medium text-amber-50"
-                : "rounded-full bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 transition hover:-translate-y-0.5"
+                ? "rounded-full bg-gradient-to-r from-cyan-400 via-sky-400 to-fuchsia-500 px-4 py-2 text-sm font-medium text-slate-950 shadow-lg shadow-fuchsia-500/20"
+                : "rounded-full border border-white/10 bg-white/10 px-4 py-2 text-sm font-medium text-indigo-50 transition hover:-translate-y-0.5 hover:bg-white/16"
             }
             onClick={() => onToggle(option)}
           >
