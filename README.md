@@ -17,26 +17,19 @@
   </a>
 </p>
 
-## Disclaimer
-
-North Star was developed during the **DSPT Vibe Coding Hackathon** dedicated to
-Data Makers Fest, but it is an independent project by the repository authors.
-It is not an official Data Makers Fest application and is not maintained,
-sponsored, endorsed, or operated by the event organization.
-
 North Star is a conference schedule planning app for **Data Makers Fest 2026**.
 It helps attendees turn broad interests into a workable event agenda by combining
 session metadata, recommendation scoring, conflict checks, and calendar export.
 
-## Data Makers Fest 2026
+Built during the **DSPT Vibe Coding Hackathon** dedicated to Data Makers Fest,
+this is an independent project by the repository authors. It is not an official
+Data Makers Fest application and is not maintained, sponsored, endorsed, or
+operated by the event organization.
 
-North Star was built around the **Data Makers Fest 2026** conference experience.
-According to the official event site, the festival is scheduled for **May 4 to
-May 6, 2026** in **Alfandega do Porto, Portugal**.
-
-- Official event site: <https://www.datamakersfest.com/>
-- Agenda: <https://www.datamakersfest.com/agenda>
-- Tickets: <https://www.datamakersfest.com/tickets>
+Data Makers Fest 2026: **May 4 to May 6, 2026** in **Alfandega do Porto,
+Portugal**. Official links: [site](https://www.datamakersfest.com/),
+[agenda](https://www.datamakersfest.com/agenda),
+[tickets](https://www.datamakersfest.com/tickets).
 
 ## What It Does
 
