@@ -1,8 +1,7 @@
 # North Star
 
-North Star is the current web application implementation for the
-**Data Makers Fest 2026** schedule recommender described in
-[docs/prd.md](docs/prd.md). It helps attendees move from broad
+North Star is a PoC of a web application based on the 
+**Data Makers Fest 2026** developed for the DSPT vibe coading Hackathon, implementing schedule recommender. It helps attendees move from broad
 interests to a usable conference plan:
 
 - Select tracks, talk types, levels, topics, and speakers from the actual
@@ -13,11 +12,6 @@ interests to a usable conference plan:
 - Review the saved agenda in a calendar-style day view
 - Export the agenda as Markdown or `.ics`
 
-Still deferred:
-- Notes
-- Summaries and action items
-- Authentication
-- Server-side user persistence
 
 ## Branding
 
