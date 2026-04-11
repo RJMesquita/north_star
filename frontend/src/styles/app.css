@@ -1,0 +1,264 @@
+:root {
+  font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+  color: #13252f;
+  background:
+    radial-gradient(circle at top left, rgba(255, 196, 96, 0.4), transparent 28%),
+    radial-gradient(circle at top right, rgba(49, 145, 145, 0.24), transparent 28%),
+    linear-gradient(180deg, #f7f1df 0%, #f4f6f2 54%, #edf2f3 100%);
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.app-shell {
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 1.5rem;
+  align-items: start;
+  margin-bottom: 1.5rem;
+}
+
+.hero h1 {
+  margin: 0.4rem 0 0.75rem;
+  font-family: "Space Grotesk", "IBM Plex Sans", sans-serif;
+  font-size: clamp(2.2rem, 3vw, 4.4rem);
+  line-height: 0.95;
+  max-width: 12ch;
+}
+
+.hero-copy,
+.panel-heading p,
+.session-meta,
+.empty-state,
+.loading-state {
+  color: #38515b;
+}
+
+.status-panel,
+.panel,
+.session-card,
+.agenda-card {
+  border: 1px solid rgba(19, 37, 47, 0.12);
+  background: rgba(255, 255, 255, 0.76);
+  backdrop-filter: blur(18px);
+  border-radius: 24px;
+  box-shadow: 0 14px 50px rgba(19, 37, 47, 0.08);
+}
+
+.status-panel {
+  display: flex;
+  gap: 0.85rem;
+  align-items: center;
+  padding: 1rem 1.1rem;
+}
+
+.status-dot {
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 999px;
+  background: #ef7d45;
+  box-shadow: 0 0 0 6px rgba(239, 125, 69, 0.12);
+}
+
+.layout-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.panel {
+  padding: 1.25rem;
+}
+
+.panel-heading h2 {
+  margin: 0.2rem 0 0.35rem;
+  font-size: 1.3rem;
+}
+
+.eyebrow {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #a54e1e;
+}
+
+.form-grid {
+  display: grid;
+  gap: 1rem;
+  margin: 1rem 0 1.25rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0;
+  border: 0;
+  padding: 0;
+}
+
+.field span {
+  font-weight: 600;
+}
+
+.field input,
+.field textarea {
+  width: 100%;
+  border: 1px solid rgba(19, 37, 47, 0.18);
+  border-radius: 16px;
+  padding: 0.8rem 0.95rem;
+  background: rgba(247, 241, 223, 0.52);
+}
+
+.pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.pill,
+.primary-button,
+.secondary-button,
+.ghost-button {
+  border: 0;
+  border-radius: 999px;
+  transition:
+    transform 120ms ease,
+    background 120ms ease,
+    opacity 120ms ease;
+}
+
+.pill {
+  padding: 0.6rem 0.9rem;
+  background: rgba(19, 37, 47, 0.08);
+  color: #13252f;
+}
+
+.pill.active {
+  background: #13252f;
+  color: #f7f1df;
+}
+
+.primary-button,
+.secondary-button,
+.ghost-button {
+  padding: 0.8rem 1rem;
+  font-weight: 600;
+}
+
+.primary-button {
+  background: linear-gradient(135deg, #ef7d45 0%, #df5b2f 100%);
+  color: #fff7f0;
+}
+
+.secondary-button {
+  background: #13252f;
+  color: #eff6f7;
+}
+
+.ghost-button {
+  background: rgba(19, 37, 47, 0.08);
+  color: #13252f;
+}
+
+.primary-button:hover,
+.secondary-button:hover,
+.ghost-button:hover,
+.pill:hover {
+  transform: translateY(-1px);
+}
+
+.primary-button:disabled,
+.secondary-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.card-stack {
+  display: grid;
+  gap: 1rem;
+}
+
+.session-card,
+.agenda-card {
+  padding: 1rem;
+}
+
+.session-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 1rem;
+}
+
+.session-card h3,
+.agenda-card h3 {
+  margin: 0;
+  font-size: 1.08rem;
+}
+
+.rank-label,
+.score-chip {
+  margin: 0;
+  font-size: 0.83rem;
+  font-weight: 700;
+  color: #a54e1e;
+}
+
+.score-chip {
+  background: rgba(239, 125, 69, 0.12);
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+}
+
+.empty-state,
+.loading-state {
+  padding: 2rem;
+  text-align: center;
+  border: 1px dashed rgba(19, 37, 47, 0.16);
+  border-radius: 18px;
+}
+
+@media (max-width: 1080px) {
+  .hero,
+  .layout-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .app-shell {
+    padding: 1rem;
+  }
+
+  .panel,
+  .session-card,
+  .agenda-card {
+    border-radius: 18px;
+  }
+}
