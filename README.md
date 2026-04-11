@@ -1,7 +1,7 @@
 # North Star
 
-North Star is a PoC of a web application based on the 
-**Data Makers Fest 2026** developed for the DSPT vibe coading Hackathon, implementing schedule recommender. It helps attendees move from broad
+North Star is a web application based on the 
+**Data Makers Fest 2026** developed for the DSPT vibe coading Hackathon, implementing a personal schedule recommender. It helps attendees move from broad
 interests to a usable conference plan:
 
 - Select tracks, talk types, levels, topics, and speakers from the actual
