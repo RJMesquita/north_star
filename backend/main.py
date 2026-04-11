@@ -6,7 +6,14 @@ from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.dataset import DatasetLoadError
-from app.models import ConflictCheckRequest, RecommendationRequest
+from app.models import (
+    ConflictCheckRequest,
+    ConflictCheckResult,
+    FilterOptions,
+    RecommendationRequest,
+    RecommendationResult,
+    SessionResponse,
+)
 from app.services import RecommendationService
 
 
@@ -23,7 +30,7 @@ def create_app() -> FastAPI:
     service = RecommendationService.create()
     app = FastAPI(
         title="Schedulize API",
-        version="0.1.0",
+        version="0.1.1",
         description="Conference schedule recommendation API for the Web MVP.",
     )
     app.add_middleware(
@@ -40,20 +47,20 @@ def create_app() -> FastAPI:
 
         return {"status": "ok"}
 
-    @app.get("/sessions/filters")
+    @app.get("/sessions/filters", response_model=FilterOptions)
     def get_filter_options() -> dict[str, list[str]]:
         """Return distinct filter options for the profile form."""
 
         filters = service.get_filter_options()
         return filters.model_dump(by_alias=True)
 
-    @app.get("/sessions")
+    @app.get("/sessions", response_model=list[SessionResponse])
     def list_sessions(ids: list[str] | None = Query(default=None)) -> list[dict]:
         """Return normalized sessions, optionally filtered by session id."""
 
         return [session.model_dump() for session in service.list_sessions(ids)]
 
-    @app.post("/recommendations")
+    @app.post("/recommendations", response_model=list[RecommendationResult])
     def get_recommendations(
         request: RecommendationRequest,
     ) -> list[dict]:
@@ -64,7 +71,7 @@ def create_app() -> FastAPI:
             for recommendation in service.recommend(request)
         ]
 
-    @app.post("/agenda/check-conflicts")
+    @app.post("/agenda/check-conflicts", response_model=ConflictCheckResult)
     def check_conflicts(request: ConflictCheckRequest) -> dict:
         """Return conflict information for an agenda candidate."""
 
@@ -82,7 +89,7 @@ except DatasetLoadError as exc:
     startup_error = str(exc)
     app = FastAPI(
         title="Schedulize API",
-        version="0.1.0",
+        version="0.1.1",
         description="Conference schedule recommendation API for the Web MVP.",
     )
 

@@ -70,4 +70,7 @@ docker-compose.override.yml
 logs/
 
 # GitHub
-.github/
+# Keep workflow definitions versioned for CI/CD.
+!.github/
+!.github/workflows/
+!.github/workflows/*.yml

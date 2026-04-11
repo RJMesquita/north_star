@@ -1,8 +1,9 @@
 [project]
 name = "schedulize-backend"
-version = "0.1.0"
+version = "0.1.1"
 description = "Schedulize backend API for conference recommendations."
 readme = "../README.md"
+license = { text = "MIT" }
 requires-python = ">=3.13"
 dependencies = [
     "fastapi>=0.115.0",

@@ -1,0 +1,593 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Schedulize API",
+    "description": "Conference schedule recommendation API for the Web MVP.",
+    "version": "0.1.1"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Healthcheck",
+        "description": "Return a simple health status.",
+        "operationId": "healthcheck_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Healthcheck Health Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sessions/filters": {
+      "get": {
+        "summary": "Get Filter Options",
+        "description": "Return distinct filter options for the profile form.",
+        "operationId": "get_filter_options_sessions_filters_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FilterOptions"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sessions": {
+      "get": {
+        "summary": "List Sessions",
+        "description": "Return normalized sessions, optionally filtered by session id.",
+        "operationId": "list_sessions_sessions_get",
+        "parameters": [
+          {
+            "name": "ids",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Ids"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SessionResponse"
+                  },
+                  "title": "Response List Sessions Sessions Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/recommendations": {
+      "post": {
+        "summary": "Get Recommendations",
+        "description": "Return ranked recommendations for a profile request.",
+        "operationId": "get_recommendations_recommendations_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecommendationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/RecommendationResult"
+                  },
+                  "type": "array",
+                  "title": "Response Get Recommendations Recommendations Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/agenda/check-conflicts": {
+      "post": {
+        "summary": "Check Conflicts",
+        "description": "Return conflict information for an agenda candidate.",
+        "operationId": "check_conflicts_agenda_check_conflicts_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConflictCheckRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConflictCheckResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ConflictCheckRequest": {
+        "properties": {
+          "candidate_session_id": {
+            "type": "string",
+            "title": "Candidate Session Id"
+          },
+          "agenda_session_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Agenda Session Ids"
+          }
+        },
+        "type": "object",
+        "required": [
+          "candidate_session_id"
+        ],
+        "title": "ConflictCheckRequest",
+        "description": "Input used to evaluate agenda conflicts.\n\nAttributes:\n    candidate_session_id: Session the user wants to add.\n    agenda_session_ids: Already-saved agenda session identifiers."
+      },
+      "ConflictCheckResult": {
+        "properties": {
+          "candidate_session_id": {
+            "type": "string",
+            "title": "Candidate Session Id"
+          },
+          "has_conflict": {
+            "type": "boolean",
+            "title": "Has Conflict"
+          },
+          "conflicting_sessions": {
+            "items": {
+              "$ref": "#/components/schemas/SessionResponse"
+            },
+            "type": "array",
+            "title": "Conflicting Sessions"
+          }
+        },
+        "type": "object",
+        "required": [
+          "candidate_session_id",
+          "has_conflict",
+          "conflicting_sessions"
+        ],
+        "title": "ConflictCheckResult",
+        "description": "Conflict evaluation result for an agenda candidate."
+      },
+      "FilterOptions": {
+        "properties": {
+          "tracks": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Tracks"
+          },
+          "talk_types": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Talk Types"
+          },
+          "levels": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Levels"
+          },
+          "keywords": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Keywords"
+          },
+          "speakers": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Speakers"
+          }
+        },
+        "type": "object",
+        "required": [
+          "tracks",
+          "talk_types",
+          "levels",
+          "keywords",
+          "speakers"
+        ],
+        "title": "FilterOptions",
+        "description": "Reference data used to render profile filters in the UI.\n\nAttributes:\n    tracks: Distinct tracks in the dataset.\n    talk_types: Distinct talk types in the dataset.\n    levels: Distinct audience levels in the dataset.\n    keywords: Distinct keywords available in the dataset.\n    speakers: Distinct speaker names available in the dataset."
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "RecommendationRequest": {
+        "properties": {
+          "tracks": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Tracks"
+          },
+          "talk_types": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Talk Types"
+          },
+          "levels": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Levels"
+          },
+          "keywords": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Keywords"
+          },
+          "preferred_speakers": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Preferred Speakers"
+          },
+          "time_preference": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Time Preference"
+          },
+          "max_duration_minutes": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Duration Minutes"
+          },
+          "limit": {
+            "type": "integer",
+            "maximum": 25.0,
+            "minimum": 1.0,
+            "title": "Limit",
+            "default": 10
+          }
+        },
+        "type": "object",
+        "title": "RecommendationRequest",
+        "description": "Input used to compute personalized recommendations.\n\nAttributes:\n    tracks: Preferred tracks.\n    talk_types: Preferred talk types.\n    levels: Preferred levels.\n    keywords: Free-text topics of interest.\n    preferred_speakers: Speaker names to boost.\n    time_preference: Optional part-of-day preference.\n    max_duration_minutes: Optional maximum session duration.\n    limit: Maximum number of recommendations to return."
+      },
+      "RecommendationResult": {
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "title": "Session Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "speakers": {
+            "type": "string",
+            "title": "Speakers"
+          },
+          "track": {
+            "type": "string",
+            "title": "Track"
+          },
+          "talk_type": {
+            "type": "string",
+            "title": "Talk Type"
+          },
+          "level": {
+            "type": "string",
+            "title": "Level"
+          },
+          "keywords": {
+            "type": "string",
+            "title": "Keywords"
+          },
+          "scheduled_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scheduled At"
+          },
+          "ends_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ends At"
+          },
+          "duration_minutes": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration Minutes"
+          },
+          "score": {
+            "type": "number",
+            "title": "Score"
+          }
+        },
+        "type": "object",
+        "required": [
+          "session_id",
+          "title",
+          "description",
+          "speakers",
+          "track",
+          "talk_type",
+          "level",
+          "keywords",
+          "scheduled_at",
+          "ends_at",
+          "duration_minutes",
+          "score"
+        ],
+        "title": "RecommendationResult",
+        "description": "Ranked recommendation payload returned by the API."
+      },
+      "SessionResponse": {
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "title": "Session Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "speakers": {
+            "type": "string",
+            "title": "Speakers"
+          },
+          "track": {
+            "type": "string",
+            "title": "Track"
+          },
+          "talk_type": {
+            "type": "string",
+            "title": "Talk Type"
+          },
+          "level": {
+            "type": "string",
+            "title": "Level"
+          },
+          "keywords": {
+            "type": "string",
+            "title": "Keywords"
+          },
+          "scheduled_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scheduled At"
+          },
+          "ends_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ends At"
+          },
+          "duration_minutes": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration Minutes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "session_id",
+          "title",
+          "description",
+          "speakers",
+          "track",
+          "talk_type",
+          "level",
+          "keywords",
+          "scheduled_at",
+          "ends_at",
+          "duration_minutes"
+        ],
+        "title": "SessionResponse",
+        "description": "Session payload returned to the frontend."
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}

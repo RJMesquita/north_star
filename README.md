@@ -1,83 +1,156 @@
 # North Star
 
-North Star is a web application based on the 
-**Data Makers Fest 2026** developed for the DSPT vibe coading Hackathon, implementing a personal schedule recommender. It helps attendees move from broad
-interests to a usable conference plan:
+![Version](https://img.shields.io/badge/version-0.1.1-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Visibility](https://img.shields.io/badge/visibility-private-lightgrey)
+![CI/CD](https://img.shields.io/badge/ci%2Fcd-GitHub_Actions-2088FF?logo=githubactions&logoColor=white)
 
-- Select tracks, talk types, levels, topics, and speakers from the actual
-  dataset
-- Get ranked session recommendations
-- Add one session or the full recommendation set to a personal agenda
-- Catch schedule conflicts before saving
-- Review the saved agenda in a calendar-style day view
-- Export the agenda as Markdown or `.ics`
+## Disclaimer
 
+North Star was developed during the **DSPT Vibe Coding Hackathon** dedicated to
+Data Makers Fest, but it is an independent project by the repository authors.
+It is not an official Data Makers Fest application and is not maintained,
+sponsored, endorsed, or operated by the event organization.
 
-## Branding
+North Star is a conference schedule planning app for **Data Makers Fest 2026**.
+It helps attendees turn broad interests into a workable event agenda by combining
+session metadata, recommendation scoring, conflict checks, and calendar export.
 
-The shipped UI is branded as **North Star** and includes:
+## What It Does
 
-- A custom logo under `frontend/img/`
-- Favicon assets generated in `frontend/public/`
-- A dark indigo visual theme with cyan and magenta accents derived from the
-  logo
+- Loads conference sessions from the event workbook
+- Lets attendees filter by track, talk type, level, topic, and speaker
+- Ranks sessions with a TF-IDF recommendation model
+- Detects schedule conflicts before agenda changes are saved
+- Stores the attendee profile and agenda locally in the browser
+- Exports the saved agenda as Markdown or `.ics`
 
-The repository name and backend package names still use `schedulize`, but the
-user-facing frontend currently presents the product as North Star with the
-subtitle **Conference Personal Schedule Optimization**.
+## Stack
+
+### Frontend
+
+- React 18
+- TypeScript
+- Vite
+- Tailwind CSS v4
+- Vitest + Testing Library
+
+### Backend
+
+- FastAPI
+- Python 3.13
+- pandas + openpyxl for workbook loading
+- scikit-learn TF-IDF + cosine similarity for recommendation scoring
+- pytest + httpx for API and service tests
+
+### Tooling
+
+- `uv` for Python dependency management
+- `npm` for frontend dependency management
+- `make` for common local development commands
+- GitHub Actions for CI/CD validation
 
 ## Architecture
 
-The repo is now split into two app layers:
+The repo is split into two application layers and one data source:
 
-- `backend/`: FastAPI service that loads the workbook, normalizes session data,
-  computes TF-IDF recommendations, surfaces filter metadata, and checks agenda
-  conflicts
-- `frontend/`: React + TypeScript SPA styled with Tailwind CSS that captures
-  user preferences, renders ranked results, persists the agenda in browser
-  storage, supports export, and includes North Star branding assets for the
-  Conference Personal Schedule Optimization experience
+- `frontend/`: Single-page React client for profile capture, recommendations,
+  agenda review, local persistence, and export
+- `backend/`: FastAPI API for workbook normalization, recommendation scoring,
+  session lookup, and agenda conflict checks
+- `data/`: Excel workbook used as the current source of conference truth
 
-That split was chosen for two reasons:
-- The recommendation engine and schedule logic belong on the backend because
-  they operate on conference data and should expose stable contracts.
-- The current product does not need accounts yet, so agenda/profile persistence
-  stays in
-  the browser to keep scope aligned with the PRD.
+### Request Flow
+
+1. The frontend calls `GET /sessions/filters` to load selectable metadata.
+2. The attendee submits a profile to `POST /recommendations`.
+3. The backend filters and ranks sessions from the workbook-derived dataset.
+4. The frontend adds sessions to the agenda and checks overlaps through
+   `POST /agenda/check-conflicts`.
+5. Saved agenda ids are persisted in browser local storage.
+6. On reload, the frontend calls `GET /sessions?ids=...` to rehydrate the plan.
+
+### Backend Responsibilities
+
+- Read and normalize the `Accepted sessions` worksheet
+- Build filter option lists from normalized session metadata
+- Rank sessions from structured attendee preferences
+- Check overlap between candidate and existing agenda sessions
+- Expose a small API surface for the SPA
+
+### Frontend Responsibilities
+
+- Capture attendee preferences
+- Call the backend API and render ranked sessions
+- Manage agenda additions, removals, and export
+- Persist profile and agenda state locally
+- Present the North Star branded experience
+
+## Repository Layout
+
+```text
+.
+├── backend/
+│   ├── app/
+│   │   ├── dataset.py
+│   │   ├── models.py
+│   │   └── services.py
+│   ├── main.py
+│   ├── pyproject.toml
+│   └── tests/
+├── data/
+│   └── data-makers-fest-2026.xlsx
+├── docs/
+│   └── prd.md
+├── frontend/
+│   ├── public/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── lib/
+│   │   ├── styles/
+│   │   └── test/
+│   ├── package.json
+│   └── package-lock.json
+├── .github/
+│   └── workflows/
+│       └── ci-cd.yml
+├── LICENSE
+├── NOTICE.md
+└── Makefile
+```
 
 ## API Surface
 
-The backend exposes four main endpoints:
+Machine-readable contract: [docs/openapi.json](/home/daniel/code/dosorio79/schedulize/docs/openapi.json)
+
+Regenerate it with:
+
+```bash
+make openapi
+```
 
 - `GET /health`
-  - Simple status endpoint for local troubleshooting.
+  Returns backend health status.
 - `GET /sessions/filters`
-  - Returns distinct tracks, talk types, levels, keywords, and speakers for the
-    profile form.
-  - `GET` is used because this is stable server-owned reference data.
+  Returns distinct tracks, talk types, levels, keywords, and speakers.
 - `GET /sessions?ids=...`
-  - Returns normalized session records.
-  - The frontend uses this to rebuild agenda cards from saved session ids.
+  Returns normalized sessions, optionally filtered by session id.
 - `POST /recommendations`
-  - Accepts a structured profile payload and returns ranked sessions.
-  - `POST` is used because this is a computation request with arrays, free
-    text, and optional constraints rather than a simple resource fetch.
+  Accepts attendee preferences and returns ranked recommendations.
 - `POST /agenda/check-conflicts`
-  - Accepts a candidate session plus current agenda ids and returns overlap
-    warnings.
-  - `POST` is used because the frontend sends transient user state for the
-    backend to evaluate.
+  Accepts a candidate session id plus existing agenda ids and returns overlap
+  warnings.
 
 ## Data Source
 
-The app reads the conference workbook from:
+The backend reads the workbook at:
 
 ```text
 data/data-makers-fest-2026.xlsx
 ```
 
-The current backend expects the `Accepted sessions` worksheet with at least
-these columns:
+The current implementation expects the `Accepted sessions` worksheet with at
+least these columns:
 
 - `Session Id`
 - `Title`
@@ -90,46 +163,44 @@ these columns:
 - `Scheduled At`
 - `Scheduled Duration`
 
-## Product Behavior
-
-- Topics and speakers are selected from dataset-derived lists rather than free
-  text entry.
-- Recommendation results can be saved one at a time or all at once.
-- Agenda conflicts are checked before saving and can still be overridden by the
-  user.
-- The agenda is displayed as a day-grouped calendar view optimized for a
-  conference schedule rather than a month grid.
-- Exports are generated client-side as Markdown and `.ics`.
-- Favicons and the browser title are set from the North Star branding.
-
 ## Local Development
 
-### Make Targets
+### Prerequisites
 
-From the repo root:
+- Python 3.13
+- Node.js 22
+- `uv`
+- `npm`
+- `make`
+
+### Install Dependencies
+
+From the repository root:
 
 ```bash
 make install
-make run
-make test
 ```
 
-Use `make help` to list all available targets.
+### Run Both Apps
 
-### Backend
+```bash
+make run
+```
 
-From the repo root:
+- Backend: `http://127.0.0.1:8000`
+- Frontend: `http://127.0.0.1:5173`
+
+### Run Individually
+
+Backend:
 
 ```bash
 cd backend
+uv sync --group dev
 uv run uvicorn main:app --reload
 ```
 
-The API runs on `http://127.0.0.1:8000`.
-
-### Frontend
-
-From the repo root:
+Frontend:
 
 ```bash
 cd frontend
@@ -137,79 +208,89 @@ npm install
 npm run dev
 ```
 
-The SPA runs on `http://127.0.0.1:5173`.
+## Testing
 
-The frontend uses Tailwind CSS through the Vite plugin, so `npm install` is
-required before local UI development or builds.
+Run everything:
 
-## Tests
+```bash
+make test
+```
 
-### Backend
+Run backend only:
 
 ```bash
 make test-backend
 ```
 
-### Frontend
+Run frontend only:
 
 ```bash
 make test-frontend
 ```
 
-## User Flow
+Production frontend build:
 
-The app follows this call sequence:
-
-1. The frontend loads and requests `GET /sessions/filters`.
-2. The user selects tracks, talk types, levels, dataset-derived topics,
-   speakers, and optional schedule constraints.
-3. The frontend submits `POST /recommendations`.
-4. The user adds one session or all returned sessions to their agenda.
-5. Before each save, the frontend calls `POST /agenda/check-conflicts`.
-6. The frontend stores accepted session ids in browser local storage.
-7. On reload, the frontend calls `GET /sessions?ids=...` to rebuild the saved
-   agenda.
-8. The agenda can be exported to Markdown or `.ics` from the UI.
-
-## Project Structure
-
-```text
-.
-├── backend/
-│   ├── app/
-│   │   ├── dataset.py
-│   │   ├── models.py
-│   │   └── services.py
-│   ├── main.py
-│   └── pyproject.toml
-├── data/
-│   └── data-makers-fest-2026.xlsx
-├── docs/
-│   └── prd.md
-└── frontend/
-    ├── img/
-    ├── public/
-    ├── src/
-    │   ├── components/
-    │   ├── lib/
-    │   └── styles/
-    ├── package.json
-    └── vite.config.ts
+```bash
+cd frontend
+npm run build
 ```
 
-## Verification
+## CI/CD
 
-What has been verified in this repo:
+GitHub Actions workflow: `.github/workflows/ci-cd.yml`
 
-- Python syntax compilation for the new backend modules
-- Backend import smoke test via `uv run python`, confirming the FastAPI app
-  boots and registers routes
-- Backend automated tests: `27 passed`
-- Frontend automated tests: `5 passed`
-- Frontend production build: passed
+It currently validates release readiness by:
 
-## Next Likely Steps
+- Running backend tests on Python 3.13 with `uv sync --locked`
+- Running frontend tests with `npm ci`
+- Building the frontend bundle after tests pass
+- Triggering on pushes and pull requests to `main` and `dev`
+- Triggering on version tags matching `v*`
 
-- Add session detail views and recommendation rationale
-- Improve the calendar layout further if a denser timetable view is needed
-- Implement notes once the agenda UX is stable
+This workflow is CI-first. It does not deploy anywhere yet because the repo
+does not currently define a target hosting platform or deployment secrets.
+
+## Product Branding
+
+The shipped UI is branded as **North Star**.
+
+- Repository and package names still use `schedulize`
+- Frontend copy uses the subtitle `Conference Personal Schedule Optimization`
+- Brand assets live in `frontend/img/` and `frontend/public/`
+
+## Origin And Affiliation
+
+- Built during the DSPT Vibe Coding Hackathon focused on Data Makers Fest
+- Uses a hackathon-context conference workbook for prototyping
+- Not an official event application
+- Not part of the Data Makers Fest organization
+- Not a statement of sponsorship, partnership, or endorsement
+
+## License
+
+The source code in this repository is licensed under the MIT License. See
+`LICENSE`.
+
+The workbook under `data/` is not covered by the MIT License unless you are the
+rights holder and explicitly say otherwise. See `NOTICE.md` before making this
+repository public or representing it outside the current private-release scope.
+
+## Release Checklist
+
+Before cutting a release:
+
+1. Run `make test`.
+2. Run the frontend production build.
+3. Verify the workbook in `data/` is the intended release dataset.
+4. Review README accuracy for setup and product behavior.
+5. Confirm `LICENSE` and `NOTICE.md` still match the publication plan.
+6. Create a version tag such as `v0.1.1`.
+
+## What Else To Add Before a Real Release
+
+- A changelog with tagged release notes
+- Deployment workflow once hosting is defined
+- Environment variable documentation if runtime config is introduced
+- Screenshots or a short demo section in the README
+- Branch protection rules requiring the new CI workflow
+- Optional linting jobs if you want formatting and style gates in CI

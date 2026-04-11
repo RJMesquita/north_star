@@ -3,7 +3,7 @@ SHELL := /bin/sh
 BACKEND_DIR := backend
 FRONTEND_DIR := frontend
 
-.PHONY: help install install-backend install-frontend run run-backend run-frontend test test-backend test-frontend
+.PHONY: help install install-backend install-frontend run run-backend run-frontend test test-backend test-frontend openapi
 
 help:
 	@echo "Available targets:"
@@ -16,6 +16,7 @@ help:
 	@echo "  make test             Run backend and frontend tests"
 	@echo "  make test-backend     Run backend pytest suite"
 	@echo "  make test-frontend    Run frontend Vitest suite"
+	@echo "  make openapi          Regenerate docs/openapi.json from the FastAPI app"
 
 install: install-backend install-frontend
 
@@ -45,3 +46,6 @@ test-backend:
 
 test-frontend:
 	cd $(FRONTEND_DIR) && npm test
+
+openapi:
+	cd $(BACKEND_DIR) && uv run python -c "import json, pathlib, main; pathlib.Path('../docs/openapi.json').write_text(json.dumps(main.app.openapi(), indent=2) + '\n')"
