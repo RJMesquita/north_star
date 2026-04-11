@@ -1,7 +1,8 @@
-# Schedulize
+# North Star
 
-Schedulize is a web app for the **Data Makers Fest 2026** schedule recommender
-described in [docs/prd.md](docs/prd.md). It helps attendees move from broad
+North Star is the current web application implementation for the
+**Data Makers Fest 2026** schedule recommender described in
+[docs/prd.md](docs/prd.md). It helps attendees move from broad
 interests to a usable conference plan:
 
 - Select tracks, talk types, levels, topics, and speakers from the actual
@@ -18,6 +19,18 @@ Still deferred:
 - Authentication
 - Server-side user persistence
 
+## Branding
+
+The shipped UI is branded as **North Star** and includes:
+
+- A custom logo under `frontend/img/`
+- Favicon assets generated in `frontend/public/`
+- A dark indigo visual theme with cyan and magenta accents derived from the
+  logo
+
+The repository name and backend package names still use `schedulize`, but the
+user-facing frontend currently presents the product as North Star.
+
 ## Architecture
 
 The repo is now split into two app layers:
@@ -27,7 +40,7 @@ The repo is now split into two app layers:
   conflicts
 - `frontend/`: React + TypeScript SPA styled with Tailwind CSS that captures
   user preferences, renders ranked results, persists the agenda in browser
-  storage, and supports export
+  storage, supports export, and includes North Star branding assets
 
 That split was chosen for two reasons:
 - The recommendation engine and schedule logic belong on the backend because
@@ -91,6 +104,7 @@ these columns:
 - The agenda is displayed as a day-grouped calendar view optimized for a
   conference schedule rather than a month grid.
 - Exports are generated client-side as Markdown and `.ics`.
+- Favicons and the browser title are set from the North Star branding.
 
 ## Local Development
 
@@ -177,6 +191,8 @@ The app follows this call sequence:
 ├── docs/
 │   └── prd.md
 └── frontend/
+    ├── img/
+    ├── public/
     ├── src/
     │   ├── components/
     │   ├── lib/
