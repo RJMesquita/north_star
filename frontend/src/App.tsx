@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import northStarLogo from "../img/Gemini_Generated_Image_yi41ljyi41ljyi41.png";
 
 import { AgendaPanel } from "./components/AgendaPanel";
 import { ProfileForm } from "./components/ProfileForm";
@@ -201,32 +202,37 @@ export function App(): JSX.Element {
   }
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(251,191,36,0.35),transparent_24%),radial-gradient(circle_at_top_right,rgba(34,197,94,0.14),transparent_24%),linear-gradient(180deg,#fff9ee_0%,#f8fafc_54%,#eef2ff_100%)] px-4 py-6 text-slate-900 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(96,165,250,0.28),transparent_20%),radial-gradient(circle_at_top_right,rgba(236,72,153,0.22),transparent_24%),radial-gradient(circle_at_bottom_left,rgba(129,140,248,0.18),transparent_22%),linear-gradient(180deg,#120a30_0%,#18103b_36%,#1e1447_100%)] px-4 py-6 text-slate-100 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <header className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-orange-700">
-              Schedulize
+          <div className="min-w-0">
+            <img
+              src={northStarLogo}
+              alt="North Star Conference Scheduling Plugin"
+              className="h-auto w-full max-w-[34rem] drop-shadow-[0_25px_80px_rgba(168,85,247,0.35)]"
+            />
+            <p className="mt-5 text-xs font-semibold uppercase tracking-[0.28em] text-cyan-300">
+              Conference scheduling, aligned
             </p>
-            <h1 className="mt-2 max-w-xl font-['Space_Grotesk'] text-4xl font-semibold leading-none text-slate-950 sm:text-6xl">
-              Build a conference schedule you can actually follow.
+            <h1 className="mt-2 max-w-2xl font-['Space_Grotesk'] text-4xl font-semibold leading-none text-white sm:text-6xl">
+              Build a conference plan from the sessions that matter most.
             </h1>
-            <p className="mt-4 max-w-2xl text-base leading-7 text-slate-600">
+            <p className="mt-4 max-w-2xl text-base leading-7 text-indigo-100/80">
               Compare talks by theme, speaker, session style, and timing, then
-              save the best options into a plan you can keep, share, and import
-              into your calendar.
+              save the strongest options into a plan you can review, export, and
+              carry into the event.
             </p>
           </div>
-          <aside className="rounded-[2rem] border border-slate-200 bg-white/85 p-5 shadow-[0_20px_80px_rgba(15,23,42,0.08)] backdrop-blur">
+          <aside className="rounded-[2rem] border border-white/10 bg-white/8 p-5 shadow-[0_20px_80px_rgba(0,0,0,0.25)] backdrop-blur-xl">
             <div className="flex items-start gap-3">
-              <span className="mt-1 h-3 w-3 rounded-full bg-orange-500 shadow-[0_0_0_6px_rgba(249,115,22,0.18)]" />
-              <p className="text-sm leading-6 text-slate-600">{message}</p>
+              <span className="mt-1 h-3 w-3 rounded-full bg-cyan-300 shadow-[0_0_0_6px_rgba(34,211,238,0.18)]" />
+              <p className="text-sm leading-6 text-indigo-50/85">{message}</p>
             </div>
           </aside>
         </header>
 
         {isFiltersLoading ? (
-          <main className="mt-6 rounded-[2rem] border border-dashed border-slate-200 bg-white/70 p-12 text-center text-sm text-slate-500">
+          <main className="mt-6 rounded-[2rem] border border-dashed border-white/15 bg-white/6 p-12 text-center text-sm text-indigo-100/70">
             Loading conference filters...
           </main>
         ) : (
@@ -260,9 +266,16 @@ export function App(): JSX.Element {
           </main>
         )}
 
-        <footer className="mt-8 flex flex-col gap-2 border-t border-slate-200/80 px-1 py-6 text-sm text-slate-500 md:flex-row md:items-center md:justify-between">
-          <p>Data source: Data Makers Fest 2026 session workbook.</p>
-          <p>
+        <footer className="mt-8 flex flex-col gap-3 border-t border-white/10 px-1 py-6 text-sm text-indigo-100/65 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-center gap-3">
+            <img
+              src={northStarLogo}
+              alt="North Star"
+              className="h-10 w-auto opacity-90"
+            />
+            <p>Data source: Data Makers Fest 2026 session workbook.</p>
+          </div>
+          <p className="max-w-xl">
             Your saved agenda stays in this browser until you export it or clear
             local storage.
           </p>
