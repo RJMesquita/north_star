@@ -28,6 +28,16 @@ North Star is a conference schedule planning app for **Data Makers Fest 2026**.
 It helps attendees turn broad interests into a workable event agenda by combining
 session metadata, recommendation scoring, conflict checks, and calendar export.
 
+## Data Makers Fest 2026
+
+North Star was built around the **Data Makers Fest 2026** conference experience.
+According to the official event site, the festival is scheduled for **May 4 to
+May 6, 2026** in **Alfandega do Porto, Portugal**.
+
+- Official event site: <https://www.datamakersfest.com/>
+- Agenda: <https://www.datamakersfest.com/agenda>
+- Tickets: <https://www.datamakersfest.com/tickets>
+
 ## What It Does
 
 - Loads conference sessions from the event workbook
