@@ -25,6 +25,7 @@ ENV/
 # uv
 .uv/
 uv.lock
+!backend/uv.lock
 
 # Testing
 .pytest_cache/
