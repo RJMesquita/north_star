@@ -1,21 +1,20 @@
 # Schedulize
 
-Schedulize is a Web MVP for the **Data Makers Fest 2026** schedule recommender
-described in [docs/prd.md](docs/prd.md). It helps attendees turn a short
-interest profile into ranked session recommendations and a conflict-aware
-personal agenda.
+Schedulize is a web app for the **Data Makers Fest 2026** schedule recommender
+described in [docs/prd.md](docs/prd.md). It helps attendees move from broad
+interests to a usable conference plan:
 
-This implementation intentionally targets the first meaningful web milestone
-from the PRD:
-- Profile capture
-- Recommendation ranking
-- Agenda save/remove
-- Conflict warnings
+- Select tracks, talk types, levels, topics, and speakers from the actual
+  dataset
+- Get ranked session recommendations
+- Add one session or the full recommendation set to a personal agenda
+- Catch schedule conflicts before saving
+- Review the saved agenda in a calendar-style day view
+- Export the agenda as Markdown or `.ics`
 
-The following PRD items are still deferred:
+Still deferred:
 - Notes
 - Summaries and action items
-- Export
 - Authentication
 - Server-side user persistence
 
@@ -24,14 +23,17 @@ The following PRD items are still deferred:
 The repo is now split into two app layers:
 
 - `backend/`: FastAPI service that loads the workbook, normalizes session data,
-  computes TF-IDF recommendations, and checks agenda conflicts
-- `frontend/`: React + TypeScript SPA that captures user preferences, renders
-  ranked results, and persists the agenda in browser storage
+  computes TF-IDF recommendations, surfaces filter metadata, and checks agenda
+  conflicts
+- `frontend/`: React + TypeScript SPA styled with Tailwind CSS that captures
+  user preferences, renders ranked results, persists the agenda in browser
+  storage, and supports export
 
 That split was chosen for two reasons:
 - The recommendation engine and schedule logic belong on the backend because
   they operate on conference data and should expose stable contracts.
-- The MVP does not need accounts yet, so agenda/profile persistence stays in
+- The current product does not need accounts yet, so agenda/profile persistence
+  stays in
   the browser to keep scope aligned with the PRD.
 
 ## API Surface
@@ -41,11 +43,12 @@ The backend exposes four main endpoints:
 - `GET /health`
   - Simple status endpoint for local troubleshooting.
 - `GET /sessions/filters`
-  - Returns distinct tracks, talk types, and levels for the profile form.
+  - Returns distinct tracks, talk types, levels, keywords, and speakers for the
+    profile form.
   - `GET` is used because this is stable server-owned reference data.
 - `GET /sessions?ids=...`
   - Returns normalized session records.
-  - The frontend uses this to hydrate agenda cards from saved session ids.
+  - The frontend uses this to rebuild agenda cards from saved session ids.
 - `POST /recommendations`
   - Accepts a structured profile payload and returns ranked sessions.
   - `POST` is used because this is a computation request with arrays, free
@@ -77,6 +80,17 @@ these columns:
 - `Keywords`
 - `Scheduled At`
 - `Scheduled Duration`
+
+## Product Behavior
+
+- Topics and speakers are selected from dataset-derived lists rather than free
+  text entry.
+- Recommendation results can be saved one at a time or all at once.
+- Agenda conflicts are checked before saving and can still be overridden by the
+  user.
+- The agenda is displayed as a day-grouped calendar view optimized for a
+  conference schedule rather than a month grid.
+- Exports are generated client-side as Markdown and `.ics`.
 
 ## Local Development
 
@@ -115,6 +129,9 @@ npm run dev
 
 The SPA runs on `http://127.0.0.1:5173`.
 
+The frontend uses Tailwind CSS through the Vite plugin, so `npm install` is
+required before local UI development or builds.
+
 ## Tests
 
 ### Backend
@@ -131,17 +148,18 @@ make test-frontend
 
 ## User Flow
 
-The Web MVP follows this call sequence:
+The app follows this call sequence:
 
 1. The frontend loads and requests `GET /sessions/filters`.
-2. The user selects tracks, talk types, levels, keywords, speakers, and optional
-   schedule constraints.
+2. The user selects tracks, talk types, levels, dataset-derived topics,
+   speakers, and optional schedule constraints.
 3. The frontend submits `POST /recommendations`.
-4. The user adds a session to their agenda.
-5. Before saving, the frontend calls `POST /agenda/check-conflicts`.
+4. The user adds one session or all returned sessions to their agenda.
+5. Before each save, the frontend calls `POST /agenda/check-conflicts`.
 6. The frontend stores accepted session ids in browser local storage.
-7. On reload, the frontend calls `GET /sessions?ids=...` to hydrate the saved
+7. On reload, the frontend calls `GET /sessions?ids=...` to rebuild the saved
    agenda.
+8. The agenda can be exported to Markdown or `.ics` from the UI.
 
 ## Project Structure
 
@@ -174,17 +192,12 @@ What has been verified in this repo:
 - Python syntax compilation for the new backend modules
 - Backend import smoke test via `uv run python`, confirming the FastAPI app
   boots and registers routes
-- Backend automated tests: `25 passed`
-- Frontend automated tests: `4 passed`
-
-What is not yet verified here:
-
-- Frontend production build, because `npm install` may depend on local registry
-  access in your environment
+- Backend automated tests: `27 passed`
+- Frontend automated tests: `5 passed`
+- Frontend production build: passed
 
 ## Next Likely Steps
 
-- Add backend tests for recommendation filters and schedule overlap logic
-- Add frontend tests for local storage and agenda flows
 - Add session detail views and recommendation rationale
-- Implement notes and export once the agenda UX is stable
+- Improve the calendar layout further if a denser timetable view is needed
+- Implement notes once the agenda UX is stable

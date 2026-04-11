@@ -46,6 +46,11 @@ htmlcov/
 
 # Node
 node_modules/
+*.tsbuildinfo
+
+# Local Codex workspace files
+.codex
+agents.md
 
 # OS
 .DS_Store
