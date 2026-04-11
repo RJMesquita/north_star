@@ -29,7 +29,8 @@ The shipped UI is branded as **North Star** and includes:
   logo
 
 The repository name and backend package names still use `schedulize`, but the
-user-facing frontend currently presents the product as North Star.
+user-facing frontend currently presents the product as North Star with the
+subtitle **Conference Personal Schedule Optimization**.
 
 ## Architecture
 
@@ -40,7 +41,8 @@ The repo is now split into two app layers:
   conflicts
 - `frontend/`: React + TypeScript SPA styled with Tailwind CSS that captures
   user preferences, renders ranked results, persists the agenda in browser
-  storage, supports export, and includes North Star branding assets
+  storage, supports export, and includes North Star branding assets for the
+  Conference Personal Schedule Optimization experience
 
 That split was chosen for two reasons:
 - The recommendation engine and schedule logic belong on the backend because
