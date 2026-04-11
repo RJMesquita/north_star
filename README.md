@@ -8,7 +8,7 @@
   <img src="https://img.shields.io/badge/version-0.1.1-blue" alt="Version badge" />
   <img src="https://img.shields.io/badge/license-MIT-green" alt="License badge" />
   <img src="https://img.shields.io/badge/visibility-private-lightgrey" alt="Visibility badge" />
-  <img src="https://img.shields.io/badge/ci%2Fcd-GitHub_Actions-2088FF?logo=githubactions&logoColor=white" alt="CI/CD badge" />
+  <img src="https://github.com/RJMesquita/north_star/actions/workflows/ci-cd.yml/badge.svg?branch=main" alt="CI/CD status badge" />
 </p>
 
 ## Disclaimer
