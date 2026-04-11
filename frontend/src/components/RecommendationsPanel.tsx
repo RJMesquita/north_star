@@ -44,30 +44,26 @@ export function RecommendationsPanel({
 
   return (
     <section className="rounded-[2rem] border border-slate-200 bg-white/85 p-6 shadow-[0_20px_80px_rgba(15,23,42,0.08)] backdrop-blur">
-      <div className="space-y-2">
+      <div className="flex min-h-[13rem] flex-col xl:h-[15rem]">
         <p className="text-xs font-semibold uppercase tracking-[0.24em] text-orange-700">
           Step 2
         </p>
-        <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
-          <div className="space-y-2">
-            <h2 className="font-['Space_Grotesk'] text-2xl font-semibold text-slate-950">
-              Sessions worth a closer look
-            </h2>
-            <p className="text-sm leading-6 text-slate-600">
-              These sessions line up best with the interests and time signals you
-              selected. Save individual sessions or add the whole set to sketch
-              out a first pass of your agenda.
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={onAddAll}
-            disabled={!canAddAny || isSaving}
-            className="inline-flex self-start whitespace-nowrap rounded-full bg-slate-950 px-4 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-amber-50 transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {isSaving ? "Saving..." : "Add all returned sessions"}
-          </button>
-        </div>
+        <h2 className="mt-2 font-['Space_Grotesk'] text-2xl font-semibold text-slate-950">
+          Sessions worth a closer look
+        </h2>
+        <p className="mt-4 text-sm leading-6 text-slate-600">
+          These sessions line up best with the interests and time signals you
+          selected. Save individual sessions or add the whole set to sketch
+          out a first pass of your agenda.
+        </p>
+        <button
+          type="button"
+          onClick={onAddAll}
+          disabled={!canAddAny || isSaving}
+          className="mt-auto inline-flex self-start whitespace-nowrap rounded-full bg-slate-950 px-4 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-amber-50 transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {isSaving ? "Saving..." : "Add all returned sessions"}
+        </button>
       </div>
 
       {isLoading ? (

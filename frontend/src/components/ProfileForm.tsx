@@ -53,14 +53,14 @@ export function ProfileForm({
         onSubmit(profile);
       }}
     >
-      <div className="space-y-2">
+      <div className="flex min-h-[13rem] flex-col xl:h-[15rem]">
         <p className="text-xs font-semibold uppercase tracking-[0.24em] text-orange-700">
           Step 1
         </p>
-        <h2 className="font-['Space_Grotesk'] text-2xl font-semibold text-slate-950">
+        <h2 className="mt-2 font-['Space_Grotesk'] text-2xl font-semibold text-slate-950">
           Choose your conference focus
         </h2>
-        <p className="text-sm leading-6 text-slate-600">
+        <p className="mt-4 text-sm leading-6 text-slate-600">
           Tell us what you want from the event and we will favor sessions that
           fit your themes, preferred format, speaker interests, and schedule.
         </p>

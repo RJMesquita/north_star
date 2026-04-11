@@ -79,20 +79,18 @@ export function AgendaPanel({
 
   return (
     <section className="rounded-[2rem] border border-slate-200 bg-white/85 p-6 shadow-[0_20px_80px_rgba(15,23,42,0.08)] backdrop-blur">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div className="min-w-0 space-y-2">
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-orange-700">
-            Step 3
-          </p>
-          <h2 className="font-['Space_Grotesk'] text-2xl font-semibold text-slate-950">
-            See your plan on the calendar
-          </h2>
-          <p className="text-sm leading-6 text-slate-600">
-            Your saved sessions are arranged by day and time so it is easier to
-            spot clashes, tighten gaps, and leave with something you can use.
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2 self-start">
+      <div className="flex min-h-[13rem] min-w-0 flex-col xl:h-[15rem]">
+        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-orange-700">
+          Step 3
+        </p>
+        <h2 className="mt-2 font-['Space_Grotesk'] text-2xl font-semibold text-slate-950">
+          See your plan on the calendar
+        </h2>
+        <p className="mt-4 text-sm leading-6 text-slate-600">
+          Your saved sessions are arranged by day and time so it is easier to
+          spot clashes, tighten gaps, and leave with something you can use.
+        </p>
+        <div className="mt-auto flex flex-wrap gap-2 pt-3">
           <button
             type="button"
             onClick={onDownloadMarkdown}
