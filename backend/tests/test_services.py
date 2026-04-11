@@ -12,6 +12,10 @@ def test_get_filter_options_returns_service_metadata(recommendation_service) -> 
     assert filters.tracks == ["Engineering", "Responsible AI"]
     assert filters.talk_types == ["Applications", "Technical"]
     assert filters.levels == ["Advanced", "Beginner", "Intermediate"]
+    assert "rag retrieval llm" not in filters.keywords
+    assert "governance policy ethics" not in filters.keywords
+    assert "Jane Doe" in filters.speakers
+    assert "Sam Lee" in filters.speakers
 
 
 def test_list_sessions_can_filter_by_ids(recommendation_service) -> None:

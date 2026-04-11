@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta
 from pathlib import Path
+import re
 from typing import Any
 
 import pandas as pd
@@ -116,6 +117,27 @@ def _build_search_document(
     return " ".join(part for part in parts if part)
 
 
+def _split_keywords(value: str) -> list[str]:
+    """Split a dataset keyword field into individual keyword options."""
+
+    return [
+        keyword.strip()
+        for keyword in re.split(r"[,;|/]+", value)
+        if keyword.strip()
+    ]
+
+
+def _split_speakers(value: str) -> list[str]:
+    """Split a session speaker field into individual speaker names."""
+
+    normalized_value = re.sub(r"\s+(and|&)\s+", ",", value, flags=re.IGNORECASE)
+    return [
+        speaker.strip()
+        for speaker in re.split(r"[,;|]+", normalized_value)
+        if speaker.strip()
+    ]
+
+
 def load_sessions(data_file_path: Path = DATA_FILE_PATH) -> list[SessionRecord]:
     """Load and normalize sessions from the conference workbook.
 
@@ -197,4 +219,18 @@ def build_filter_options(sessions: list[SessionRecord]) -> FilterOptions:
             {session.talk_type for session in sessions if session.talk_type}
         ),
         levels=sorted({session.level for session in sessions if session.level}),
+        keywords=sorted(
+            {
+                keyword
+                for session in sessions
+                for keyword in _split_keywords(session.keywords)
+            }
+        ),
+        speakers=sorted(
+            {
+                speaker
+                for session in sessions
+                for speaker in _split_speakers(session.speakers)
+            }
+        ),
     )

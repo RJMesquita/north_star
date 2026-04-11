@@ -22,6 +22,8 @@ export interface FilterOptions {
   tracks: string[];
   talk_types: string[];
   levels: string[];
+  keywords: string[];
+  speakers: string[];
 }
 
 export interface UserProfile {

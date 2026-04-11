@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type { ChangeEvent } from "react";
 
 import type { FilterOptions, TimePreference, UserProfile } from "../lib/types";
 
@@ -22,11 +23,8 @@ function toggleValue(values: string[], value: string): string[] {
     : [...values, value];
 }
 
-function splitCommaValues(rawValue: string): string[] {
-  return rawValue
-    .split(",")
-    .map((value) => value.trim())
-    .filter(Boolean);
+function getSelectedOptions(event: ChangeEvent<HTMLSelectElement>): string[] {
+  return Array.from(event.target.selectedOptions, (option) => option.value);
 }
 
 export function ProfileForm({
@@ -49,23 +47,26 @@ export function ProfileForm({
 
   return (
     <form
-      className="panel"
+      className="rounded-[2rem] border border-slate-200 bg-white/85 p-6 shadow-[0_20px_80px_rgba(15,23,42,0.08)] backdrop-blur"
       onSubmit={(event) => {
         event.preventDefault();
         onSubmit(profile);
       }}
     >
-      <div className="panel-heading">
-        <p className="eyebrow">Step 1</p>
-        <h2>Build your conference profile</h2>
-        <p>
-          The PRD calls for a short, high-signal questionnaire. This version
-          captures the strongest recommendation inputs without forcing account
-          creation or backend persistence.
+      <div className="space-y-2">
+        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-orange-700">
+          Step 1
+        </p>
+        <h2 className="font-['Space_Grotesk'] text-2xl font-semibold text-slate-950">
+          Choose your conference focus
+        </h2>
+        <p className="text-sm leading-6 text-slate-600">
+          Tell us what you want from the event and we will favor sessions that
+          fit your themes, preferred format, speaker interests, and schedule.
         </p>
       </div>
 
-      <div className="form-grid">
+      <div className="mt-6 grid gap-5">
         <FilterGroup
           title="Tracks"
           options={filters.tracks}
@@ -91,35 +92,53 @@ export function ProfileForm({
           }
         />
 
-        <label className="field">
-          <span>Keywords</span>
-          <textarea
-            value={profile.keywords.join(", ")}
+        <label className="grid gap-2">
+          <span className="text-sm font-semibold text-slate-900">
+            Topics from the conference catalog
+          </span>
+          <select
+            multiple
+            value={profile.keywords}
             onChange={(event) =>
-              updateField("keywords", splitCommaValues(event.target.value))
+              updateField("keywords", getSelectedOptions(event))
             }
-            placeholder="rag, data engineering, observability"
-            rows={3}
-          />
+            className="min-h-40 rounded-2xl border border-slate-200 bg-amber-50/60 px-4 py-3 text-sm text-slate-700 shadow-inner outline-none transition focus:border-orange-400"
+          >
+            {filters.keywords.map((keyword) => (
+              <option key={keyword} value={keyword}>
+                {keyword}
+              </option>
+            ))}
+          </select>
+          <p className="text-xs text-slate-500">
+            Hold Ctrl or Cmd to choose multiple topics.
+          </p>
         </label>
 
-        <label className="field">
-          <span>Preferred speakers</span>
-          <textarea
-            value={profile.preferredSpeakers.join(", ")}
+        <label className="grid gap-2">
+          <span className="text-sm font-semibold text-slate-900">
+            Speakers you want to follow
+          </span>
+          <select
+            multiple
+            value={profile.preferredSpeakers}
             onChange={(event) =>
-              updateField(
-                "preferredSpeakers",
-                splitCommaValues(event.target.value),
-              )
+              updateField("preferredSpeakers", getSelectedOptions(event))
             }
-            placeholder="Jane Doe, Alex Smith"
-            rows={3}
-          />
+            className="min-h-48 rounded-2xl border border-slate-200 bg-amber-50/60 px-4 py-3 text-sm text-slate-700 shadow-inner outline-none transition focus:border-orange-400"
+          >
+            {filters.speakers.map((speaker) => (
+              <option key={speaker} value={speaker}>
+                {speaker}
+              </option>
+            ))}
+          </select>
         </label>
 
-        <label className="field">
-          <span>Maximum duration (minutes)</span>
+        <label className="grid gap-2">
+          <span className="text-sm font-semibold text-slate-900">
+            Maximum duration (minutes)
+          </span>
           <input
             type="number"
             min="1"
@@ -128,20 +147,23 @@ export function ProfileForm({
               updateField("maxDurationMinutes", event.target.value)
             }
             placeholder="45"
+            className="rounded-2xl border border-slate-200 bg-amber-50/60 px-4 py-3 text-sm text-slate-700 shadow-inner outline-none transition focus:border-orange-400"
           />
         </label>
 
-        <fieldset className="field">
-          <span>Preferred time of day</span>
-          <div className="pill-row">
+        <fieldset className="grid gap-2">
+          <span className="text-sm font-semibold text-slate-900">
+            Preferred time of day
+          </span>
+          <div className="flex flex-wrap gap-2">
             {TIME_PREFERENCES.map((option) => (
               <button
                 key={option.value || "any"}
                 type="button"
                 className={
                   profile.timePreference === option.value
-                    ? "pill active"
-                    : "pill"
+                    ? "rounded-full bg-slate-950 px-4 py-2 text-sm font-medium text-amber-50"
+                    : "rounded-full bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 transition hover:-translate-y-0.5"
                 }
                 onClick={() => updateField("timePreference", option.value)}
               >
@@ -152,7 +174,11 @@ export function ProfileForm({
         </fieldset>
       </div>
 
-      <button className="primary-button" type="submit" disabled={isLoading}>
+      <button
+        className="mt-6 inline-flex rounded-full bg-gradient-to-r from-orange-500 to-orange-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-orange-500/20 transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+        type="submit"
+        disabled={isLoading}
+      >
         {isLoading ? "Finding sessions..." : "Get recommendations"}
       </button>
     </form>
@@ -173,15 +199,17 @@ function FilterGroup({
   onToggle,
 }: FilterGroupProps): JSX.Element {
   return (
-    <fieldset className="field">
-      <span>{title}</span>
-      <div className="pill-row">
+    <fieldset className="grid gap-2">
+      <span className="text-sm font-semibold text-slate-900">{title}</span>
+      <div className="flex flex-wrap gap-2">
         {options.map((option) => (
           <button
             key={option}
             type="button"
             className={
-              selectedValues.includes(option) ? "pill active" : "pill"
+              selectedValues.includes(option)
+                ? "rounded-full bg-slate-950 px-4 py-2 text-sm font-medium text-amber-50"
+                : "rounded-full bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700 transition hover:-translate-y-0.5"
             }
             onClick={() => onToggle(option)}
           >

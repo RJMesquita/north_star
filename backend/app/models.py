@@ -46,11 +46,15 @@ class FilterOptions(BaseModel):
         tracks: Distinct tracks in the dataset.
         talk_types: Distinct talk types in the dataset.
         levels: Distinct audience levels in the dataset.
+        keywords: Distinct keywords available in the dataset.
+        speakers: Distinct speaker names available in the dataset.
     """
 
     tracks: list[str]
     talk_types: list[str]
     levels: list[str]
+    keywords: list[str]
+    speakers: list[str]
 
 
 class RecommendationRequest(BaseModel):
@@ -117,4 +121,3 @@ class ConflictCheckResult(BaseModel):
     candidate_session_id: str
     has_conflict: bool
     conflicting_sessions: list[SessionResponse]
-

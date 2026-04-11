@@ -36,6 +36,18 @@ def test_filters_endpoint_returns_distinct_metadata(
         "tracks": ["Engineering", "Responsible AI"],
         "talk_types": ["Applications", "Technical"],
         "levels": ["Advanced", "Beginner", "Intermediate"],
+        "keywords": [
+            "ethics",
+            "eval",
+            "governance",
+            "llm",
+            "observability",
+            "policy",
+            "rag",
+            "retrieval",
+            "tracing",
+        ],
+        "speakers": ["Alex Roe", "Jane Doe", "Sam Lee", "Taylor Poe"],
     }
 
 

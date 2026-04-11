@@ -29,6 +29,21 @@ const mockRecommendation: RecommendationResult = {
   score: 0.91,
 };
 
+const secondRecommendation: RecommendationResult = {
+  session_id: "S2",
+  title: "Responsible AI Program Design",
+  description: "Frameworks for practical AI governance.",
+  speakers: "Alex Roe",
+  track: "Responsible AI",
+  talk_type: "Applications",
+  level: "Beginner",
+  keywords: "ethics",
+  scheduled_at: "2026-09-10T10:00:00",
+  ends_at: "2026-09-10T10:45:00",
+  duration_minutes: 45,
+  score: 0.77,
+};
+
 const mockAgendaSession: Session = {
   session_id: "S1",
   title: "Production RAG Pipelines",
@@ -53,8 +68,13 @@ describe("App", () => {
       tracks: ["Engineering", "Responsible AI"],
       talk_types: ["Applications", "Technical"],
       levels: ["Beginner", "Intermediate"],
+      keywords: ["rag", "ethics"],
+      speakers: ["Jane Doe", "Alex Roe"],
     });
-    vi.mocked(api.getRecommendations).mockResolvedValue([mockRecommendation]);
+    vi.mocked(api.getRecommendations).mockResolvedValue([
+      mockRecommendation,
+      secondRecommendation,
+    ]);
     vi.mocked(api.getSessions).mockResolvedValue([mockAgendaSession]);
     vi.mocked(api.checkAgendaConflicts).mockResolvedValue({
       candidate_session_id: "S1",
@@ -66,7 +86,7 @@ describe("App", () => {
   it("loads filters and renders the profile form", async () => {
     render(<App />);
 
-    expect(await screen.findByText("Build your conference profile")).toBeVisible();
+    expect(await screen.findByText("Choose your conference focus")).toBeVisible();
     expect(screen.getByRole("button", { name: "Engineering" })).toBeVisible();
   });
 
@@ -74,7 +94,7 @@ describe("App", () => {
     const user = userEvent.setup();
     render(<App />);
 
-    await screen.findByText("Build your conference profile");
+    await screen.findByText("Choose your conference focus");
     await user.click(screen.getByRole("button", { name: "Engineering" }));
     await user.click(
       screen.getByRole("button", { name: "Get recommendations" }),
@@ -99,11 +119,11 @@ describe("App", () => {
     const user = userEvent.setup();
     render(<App />);
 
-    await screen.findByText("Build your conference profile");
+    await screen.findByText("Choose your conference focus");
     await user.click(screen.getByRole("button", { name: "Get recommendations" }));
     await screen.findByText("Production RAG Pipelines");
 
-    await user.click(screen.getByRole("button", { name: "Add to agenda" }));
+    await user.click(screen.getAllByRole("button", { name: "Add to agenda" })[0]);
 
     await waitFor(() => {
       expect(api.checkAgendaConflicts).toHaveBeenCalledWith("S1", []);
@@ -123,6 +143,33 @@ describe("App", () => {
     await waitFor(() => {
       expect(api.getSessions).toHaveBeenCalledWith(["S1"]);
     });
-    expect(await screen.findByText("Your agenda")).toBeVisible();
+    expect(await screen.findByText("See your plan on the calendar")).toBeVisible();
+  });
+
+  it("adds all returned sessions to the agenda in one action", async () => {
+    const user = userEvent.setup();
+    vi.mocked(api.getSessions).mockResolvedValue([
+      mockAgendaSession,
+      {
+        ...mockAgendaSession,
+        session_id: "S2",
+        title: "Responsible AI Program Design",
+      },
+    ]);
+
+    render(<App />);
+
+    await screen.findByText("Choose your conference focus");
+    await user.click(screen.getByRole("button", { name: "Get recommendations" }));
+    await screen.findByText("Production RAG Pipelines");
+    await user.click(
+      screen.getByRole("button", { name: "Add all returned sessions" }),
+    );
+
+    await waitFor(() => {
+      expect(api.checkAgendaConflicts).toHaveBeenNthCalledWith(1, "S1", []);
+      expect(api.checkAgendaConflicts).toHaveBeenNthCalledWith(2, "S2", ["S1"]);
+    });
+    expect(localStorage.getItem("schedulize.agenda")).toBe('["S1","S2"]');
   });
 });

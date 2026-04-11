@@ -14,6 +14,8 @@ from app.dataset import (
     _clean_text,
     _parse_datetime,
     _parse_duration_minutes,
+    _split_keywords,
+    _split_speakers,
     build_filter_options,
     load_sessions,
 )
@@ -88,7 +90,7 @@ def test_build_filter_options_returns_sorted_distinct_values() -> None:
             track="Engineering",
             talk_type="Technical",
             level="Intermediate",
-            keywords="",
+            keywords="rag, observability",
             scheduled_at=None,
             ends_at=None,
             duration_minutes=None,
@@ -102,7 +104,7 @@ def test_build_filter_options_returns_sorted_distinct_values() -> None:
             track="AI",
             talk_type="Applications",
             level="Beginner",
-            keywords="",
+            keywords="ethics, rag",
             scheduled_at=None,
             ends_at=None,
             duration_minutes=None,
@@ -114,6 +116,29 @@ def test_build_filter_options_returns_sorted_distinct_values() -> None:
     assert filters.tracks == ["AI", "Engineering"]
     assert filters.talk_types == ["Applications", "Technical"]
     assert filters.levels == ["Beginner", "Intermediate"]
+    assert filters.keywords == ["ethics", "observability", "rag"]
+    assert filters.speakers == []
+
+
+def test_split_keywords_handles_multiple_delimiters() -> None:
+    """Keyword splitting should surface dataset options consistently."""
+
+    assert _split_keywords("rag, eval; tracing | llm") == [
+        "rag",
+        "eval",
+        "tracing",
+        "llm",
+    ]
+
+
+def test_split_speakers_handles_common_separators() -> None:
+    """Speaker splitting should surface individual speaker names."""
+
+    assert _split_speakers("Jane Doe, Alex Roe and Taylor Poe") == [
+        "Jane Doe",
+        "Alex Roe",
+        "Taylor Poe",
+    ]
 
 
 def test_load_sessions_raises_for_missing_file(tmp_path: Path) -> None:
