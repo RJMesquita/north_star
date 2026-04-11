@@ -1,13 +1,15 @@
-# North Star
-
 <p align="center">
   <img src="frontend/public/logo-mark.png" alt="North Star logo" width="112" />
 </p>
 
-![Version](https://img.shields.io/badge/version-0.1.1-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
-![Visibility](https://img.shields.io/badge/visibility-private-lightgrey)
-![CI/CD](https://img.shields.io/badge/ci%2Fcd-GitHub_Actions-2088FF?logo=githubactions&logoColor=white)
+<h1 align="center">North Star</h1>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/version-0.1.1-blue" alt="Version badge" />
+  <img src="https://img.shields.io/badge/license-MIT-green" alt="License badge" />
+  <img src="https://img.shields.io/badge/visibility-private-lightgrey" alt="Visibility badge" />
+  <img src="https://img.shields.io/badge/ci%2Fcd-GitHub_Actions-2088FF?logo=githubactions&logoColor=white" alt="CI/CD badge" />
+</p>
 
 ## Disclaimer
 
