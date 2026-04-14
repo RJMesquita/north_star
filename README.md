@@ -290,22 +290,6 @@ The workbook under `data/` is not covered by the MIT License unless you are the
 rights holder and explicitly say otherwise. See `NOTICE.md` before making this
 repository public or representing it outside the current private-release scope.
 
-## Release Checklist
+## Maintainer Notes
 
-Before cutting a release:
-
-1. Run `make test`.
-2. Run the frontend production build.
-3. Verify the workbook in `data/` is the intended release dataset.
-4. Review README accuracy for setup and product behavior.
-5. Confirm `LICENSE` and `NOTICE.md` still match the publication plan.
-6. Create a version tag such as `v0.1.1`.
-
-## What Else To Add Before a Real Release
-
-- A changelog with tagged release notes
-- Deployment workflow once hosting is defined
-- Environment variable documentation if runtime config is introduced
-- Screenshots or a short demo section in the README
-- Branch protection rules requiring the new CI workflow
-- Optional linting jobs if you want formatting and style gates in CI
+Release process notes live in [docs/release-checklist.md](/home/daniel/code/dosorio79/schedulize/docs/release-checklist.md).
