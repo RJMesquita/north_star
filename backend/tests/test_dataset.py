@@ -150,6 +150,8 @@ def test_anonymize_speaker_name_is_deterministic() -> None:
 
     assert first_value == second_value
     assert first_value != "Jane Doe"
+    assert len(first_value.split()) == 2
+    assert not any(character.isdigit() for character in first_value)
 
 
 def test_anonymize_speakers_text_replaces_all_speakers() -> None:
