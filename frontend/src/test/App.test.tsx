@@ -88,6 +88,7 @@ describe("App", () => {
 
     expect(await screen.findByText("Choose your conference focus")).toBeVisible();
     expect(screen.getByRole("button", { name: "Engineering" })).toBeVisible();
+    expect(api.getFilterOptions).toHaveBeenCalled();
   });
 
   it("submits the profile and shows recommendations", async () => {

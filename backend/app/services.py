@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
+from app.anonymizer import anonymize_speakers_text
 from app.dataset import build_filter_options, load_sessions
 from app.models import (
     ConflictCheckResult,
@@ -21,14 +22,21 @@ from app.models import (
 SPEAKER_BONUS = 0.1
 
 
-def _to_session_response(session: SessionRecord) -> SessionResponse:
+def _to_session_response(
+    session: SessionRecord,
+    anonymize_speakers: bool = False,
+) -> SessionResponse:
     """Convert a session record into an API response payload."""
 
     return SessionResponse(
         session_id=session.session_id,
         title=session.title,
         description=session.description,
-        speakers=session.speakers,
+        speakers=(
+            anonymize_speakers_text(session.speakers)
+            if anonymize_speakers
+            else session.speakers
+        ),
         track=session.track,
         talk_type=session.talk_type,
         level=session.level,
@@ -46,9 +54,10 @@ class RecommendationService:
     sessions: list[SessionRecord]
     vectorizer: TfidfVectorizer
     tfidf_matrix: object
+    anonymize_speakers: bool = False
 
     @classmethod
-    def create(cls) -> "RecommendationService":
+    def create(cls, anonymize_speakers: bool = False) -> "RecommendationService":
         """Build the recommendation service from workbook data.
 
         Returns:
@@ -64,12 +73,16 @@ class RecommendationService:
             sessions=sessions,
             vectorizer=vectorizer,
             tfidf_matrix=tfidf_matrix,
+            anonymize_speakers=anonymize_speakers,
         )
 
     def get_filter_options(self) -> FilterOptions:
         """Return distinct filter options for the UI."""
 
-        return build_filter_options(self.sessions)
+        return build_filter_options(
+            self.sessions,
+            anonymize_speakers=self.anonymize_speakers,
+        )
 
     def list_sessions(
         self,
@@ -93,7 +106,13 @@ class RecommendationService:
             ]
         else:
             selected_sessions = self.sessions
-        return [_to_session_response(session) for session in selected_sessions]
+        return [
+            _to_session_response(
+                session,
+                anonymize_speakers=self.anonymize_speakers,
+            )
+            for session in selected_sessions
+        ]
 
     def recommend(self, request: RecommendationRequest) -> list[RecommendationResult]:
         """Compute recommendations for a user profile.
@@ -137,7 +156,11 @@ class RecommendationService:
                 continue
 
             score = float(scores[index])
-            session_speakers = session.speakers.lower()
+            response_session = _to_session_response(
+                session,
+                anonymize_speakers=self.anonymize_speakers,
+            )
+            session_speakers = response_session.speakers.lower()
             if preferred_speakers and any(
                 speaker in session_speakers for speaker in preferred_speakers
             ):
@@ -147,7 +170,7 @@ class RecommendationService:
 
             ranked_sessions.append(
                 RecommendationResult(
-                    **_to_session_response(session).model_dump(),
+                    **response_session.model_dump(),
                     score=round(score, 4),
                 )
             )
@@ -185,7 +208,12 @@ class RecommendationService:
             if existing_session is None:
                 continue
             if _sessions_overlap(candidate, existing_session):
-                conflicting_sessions.append(_to_session_response(existing_session))
+                conflicting_sessions.append(
+                    _to_session_response(
+                        existing_session,
+                        anonymize_speakers=self.anonymize_speakers,
+                    )
+                )
 
         return ConflictCheckResult(
             candidate_session_id=candidate_session_id,

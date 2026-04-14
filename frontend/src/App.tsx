@@ -33,6 +33,13 @@ const EMPTY_PROFILE: UserProfile = {
   maxDurationMinutes: "",
 };
 
+function withProfileDefaults(profile: UserProfile | null): UserProfile {
+  return {
+    ...EMPTY_PROFILE,
+    ...(profile ?? {}),
+  };
+}
+
 export function App(): JSX.Element {
   const [filters, setFilters] = useState<FilterOptions>({
     tracks: [],
@@ -41,7 +48,9 @@ export function App(): JSX.Element {
     keywords: [],
     speakers: [],
   });
-  const [profile, setProfile] = useState<UserProfile>(loadProfile() ?? EMPTY_PROFILE);
+  const [profile, setProfile] = useState<UserProfile>(
+    withProfileDefaults(loadProfile()),
+  );
   const [agendaIds, setAgendaIds] = useState<string[]>(loadAgendaIds());
   const [agendaSessions, setAgendaSessions] = useState<Session[]>([]);
   const [recommendations, setRecommendations] = useState<RecommendationResult[]>([]);
@@ -54,6 +63,7 @@ export function App(): JSX.Element {
 
   useEffect(() => {
     void (async () => {
+      setIsFiltersLoading(true);
       try {
         const filterOptions = await getFilterOptions();
         setFilters(filterOptions);
@@ -138,7 +148,10 @@ export function App(): JSX.Element {
       const sessionLookup = buildSessionLookup();
 
       for (const sessionId of candidateIds) {
-        const result = await checkAgendaConflicts(sessionId, [...workingAgendaIds]);
+        const result = await checkAgendaConflicts(
+          sessionId,
+          [...workingAgendaIds],
+        );
         if (result.has_conflict) {
           conflictingCandidateIds.push(sessionId);
           continue;

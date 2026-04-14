@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { ChangeEvent } from "react";
 
 import type { FilterOptions, TimePreference, UserProfile } from "../lib/types";
@@ -34,6 +34,10 @@ export function ProfileForm({
   onSubmit,
 }: ProfileFormProps): JSX.Element {
   const [profile, setProfile] = useState<UserProfile>(initialProfile);
+
+  useEffect(() => {
+    setProfile(initialProfile);
+  }, [initialProfile]);
 
   function updateField<K extends keyof UserProfile>(
     key: K,
