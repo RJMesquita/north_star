@@ -196,6 +196,18 @@ From the repository root:
 make install
 ```
 
+### Optional Configuration
+
+Copy `.env-example` to `.env` and set:
+
+```bash
+ANONYMIZE_SPEAKERS=true
+```
+
+When enabled, the backend replaces real speaker names with deterministic fake
+names across filter options, recommendation results, saved agenda sessions, and
+conflict checks.
+
 ### Run Both Apps
 
 ```bash

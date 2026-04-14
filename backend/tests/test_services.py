@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from app.anonymizer import anonymize_speaker_name
 from app.models import RecommendationRequest
 
 
@@ -18,11 +19,35 @@ def test_get_filter_options_returns_service_metadata(recommendation_service) -> 
     assert "Sam Lee" in filters.speakers
 
 
+def test_get_filter_options_can_anonymize_speakers(recommendation_service) -> None:
+    """The service should be able to hide real speaker names."""
+
+    recommendation_service.anonymize_speakers = True
+    filters = recommendation_service.get_filter_options()
+
+    assert anonymize_speaker_name("Jane Doe") in filters.speakers
+    assert "Jane Doe" not in filters.speakers
+
+
 def test_list_sessions_can_filter_by_ids(recommendation_service) -> None:
     """Session listing should return only the requested identifiers."""
 
     sessions = recommendation_service.list_sessions(["S2"])
     assert [session.session_id for session in sessions] == ["S2"]
+
+
+def test_list_sessions_can_anonymize_speakers(recommendation_service) -> None:
+    """Session listing should optionally return fake speaker names."""
+
+    recommendation_service.anonymize_speakers = True
+    sessions = recommendation_service.list_sessions(["S2"])
+
+    assert sessions[0].speakers == ", ".join(
+        [
+            anonymize_speaker_name("Alex Roe"),
+            anonymize_speaker_name("Sam Lee"),
+        ]
+    )
 
 
 def test_recommendation_respects_filters_and_limit(recommendation_service) -> None:
@@ -63,6 +88,26 @@ def test_recommendation_applies_speaker_boost(recommendation_service) -> None:
     assert with_boost[0].score > without_boost[0].score
 
 
+def test_recommendation_applies_speaker_boost_with_anonymized_names(
+    recommendation_service,
+) -> None:
+    """Speaker matching should keep working when fake names are enabled."""
+
+    recommendation_service.anonymize_speakers = True
+    anonymized_name = anonymize_speaker_name("Jane Doe")
+
+    results = recommendation_service.recommend(
+        RecommendationRequest(
+            keywords=["rag"],
+            preferred_speakers=[anonymized_name],
+            limit=1,
+        )
+    )
+
+    assert results[0].session_id == "S1"
+    assert results[0].speakers == anonymized_name
+
+
 def test_recommendation_applies_time_and_duration_constraints(
     recommendation_service,
 ) -> None:
@@ -89,6 +134,22 @@ def test_check_conflicts_returns_overlapping_sessions(
 
     assert result.has_conflict is True
     assert [session.session_id for session in result.conflicting_sessions] == ["S2"]
+
+
+def test_check_conflicts_can_anonymize_conflicting_speakers(
+    recommendation_service,
+) -> None:
+    """Conflict payloads should honor the anonymization option."""
+
+    recommendation_service.anonymize_speakers = True
+    result = recommendation_service.check_conflicts("S1", ["S2", "S3"])
+
+    assert result.conflicting_sessions[0].speakers == ", ".join(
+        [
+            anonymize_speaker_name("Alex Roe"),
+            anonymize_speaker_name("Sam Lee"),
+        ]
+    )
 
 
 def test_check_conflicts_returns_empty_for_unknown_candidate(

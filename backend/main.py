@@ -5,6 +5,7 @@ from __future__ import annotations
 from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.config import load_settings
 from app.dataset import DatasetLoadError
 from app.models import (
     ConflictCheckRequest,
@@ -27,7 +28,10 @@ def create_app() -> FastAPI:
         DatasetLoadError: If the workbook cannot be loaded during startup.
     """
 
-    service = RecommendationService.create()
+    settings = load_settings()
+    service = RecommendationService.create(
+        anonymize_speakers=settings.anonymize_speakers,
+    )
     app = FastAPI(
         title="Schedulize API",
         version="0.1.1",
@@ -55,10 +59,15 @@ def create_app() -> FastAPI:
         return filters.model_dump(by_alias=True)
 
     @app.get("/sessions", response_model=list[SessionResponse])
-    def list_sessions(ids: list[str] | None = Query(default=None)) -> list[dict]:
+    def list_sessions(
+        ids: list[str] | None = Query(default=None),
+    ) -> list[dict]:
         """Return normalized sessions, optionally filtered by session id."""
 
-        return [session.model_dump() for session in service.list_sessions(ids)]
+        return [
+            session.model_dump()
+            for session in service.list_sessions(ids)
+        ]
 
     @app.post("/recommendations", response_model=list[RecommendationResult])
     def get_recommendations(
