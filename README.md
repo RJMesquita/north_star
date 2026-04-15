@@ -136,7 +136,7 @@ The repo is split into two application layers and one data source:
 
 ## API Surface
 
-Machine-readable contract: [docs/openapi.json](/home/daniel/code/dosorio79/schedulize/docs/openapi.json)
+Machine-readable contract: [docs/openapi.json](./docs/openapi.json)
 
 Regenerate it with:
 
@@ -195,18 +195,6 @@ From the repository root:
 ```bash
 make install
 ```
-
-### Optional Configuration
-
-Copy `.env-example` to `.env` and set:
-
-```bash
-ANONYMIZE_SPEAKERS=true
-```
-
-When enabled, the backend replaces real speaker names with deterministic fake
-names across filter options, recommendation results, saved agenda sessions, and
-conflict checks.
 
 ### Run Both Apps
 
@@ -304,4 +292,4 @@ repository public or representing it outside the current private-release scope.
 
 ## Maintainer Notes
 
-Release process notes live in [docs/release-checklist.md](/home/daniel/code/dosorio79/schedulize/docs/release-checklist.md).
+Release process notes live in [docs/release-checklist.md](./docs/release-checklist.md).
