@@ -33,6 +33,9 @@ const EMPTY_PROFILE: UserProfile = {
   maxDurationMinutes: "",
 };
 
+const SHOW_ANONYMIZATION_NOTICE =
+  import.meta.env.VITE_SHOW_ANONYMIZATION_NOTICE === "true";
+
 function withProfileDefaults(profile: UserProfile | null): UserProfile {
   return {
     ...EMPTY_PROFILE,
@@ -256,6 +259,27 @@ export function App(): JSX.Element {
               save the strongest options into a plan you can review, export,
               and carry into the event.
             </p>
+            <div className="mt-5 grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start">
+              <div className="rounded-[1.35rem] border border-white/8 bg-slate-950/20 px-4 py-3">
+                <p className="text-[0.7rem] font-semibold uppercase tracking-[0.26em] text-indigo-100/45">
+                  Prototype Notice
+                </p>
+                <p className="mt-2 text-sm leading-6 text-indigo-100/62">
+                  This is an independent hackathon project and not an official
+                  Data Makers Fest application.
+                </p>
+                <p className="text-sm leading-6 text-indigo-100/52">
+                  It uses conference workbook data for prototyping, and staging
+                  content may change.
+                </p>
+              </div>
+              {SHOW_ANONYMIZATION_NOTICE ? (
+                <div className="inline-flex items-center gap-2 self-start rounded-full border border-cyan-300/16 bg-cyan-300/8 px-3 py-2 text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-cyan-200/90">
+                  <span className="h-2 w-2 rounded-full bg-cyan-300" />
+                  Speaker names are anonymized in this staging environment
+                </div>
+              ) : null}
+            </div>
           </div>
         </header>
 
@@ -272,6 +296,7 @@ export function App(): JSX.Element {
               onSubmit={(nextProfile) => {
                 void handleProfileSubmit(nextProfile);
               }}
+              showAnonymizationNotice={SHOW_ANONYMIZATION_NOTICE}
             />
             <RecommendationsPanel
               recommendations={recommendations}
@@ -284,6 +309,7 @@ export function App(): JSX.Element {
               onAddAll={() => {
                 void handleAddAllToAgenda();
               }}
+              showAnonymizationNotice={SHOW_ANONYMIZATION_NOTICE}
             />
             <AgendaPanel
               sessions={agendaSessions}
@@ -306,10 +332,16 @@ export function App(): JSX.Element {
               <p>Data source: Data Makers Fest 2026 session workbook.</p>
             </div>
           </div>
-          <p className="max-w-xl">
-            Your saved agenda stays in this browser until you export it or clear
-            local storage.
-          </p>
+          <div className="max-w-xl space-y-1">
+            <p>
+              Your saved agenda stays in this browser until you export it or
+              clear local storage.
+            </p>
+            <p className="text-xs text-indigo-100/45">
+              Independent hackathon prototype. Not an official Data Makers Fest
+              product. Workbook-derived staging content may change.
+            </p>
+          </div>
         </footer>
       </div>
     </div>
