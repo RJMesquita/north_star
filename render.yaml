@@ -1,0 +1,38 @@
+services:
+  - type: web
+    name: north-star-api-dev
+    runtime: docker
+    plan: free
+    branch: dev
+    autoDeployTrigger: checksPass
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    buildFilter:
+      paths:
+        - backend/**
+        - data/**
+    envVars:
+      - key: ANONYMIZE_SPEAKERS
+        value: "true"
+
+  - type: web
+    name: north-star-frontend-dev
+    runtime: static
+    branch: dev
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: ./dist
+    autoDeployTrigger: checksPass
+    buildFilter:
+      paths:
+        - frontend/**
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_BASE_URL
+        value: https://north-star-api-dev.onrender.com
+      - key: VITE_SHOW_ANONYMIZATION_NOTICE
+        value: "true"
