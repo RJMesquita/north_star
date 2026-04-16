@@ -8,6 +8,7 @@ interface ProfileFormProps {
   initialProfile: UserProfile;
   isLoading: boolean;
   onSubmit: (profile: UserProfile) => void;
+  showAnonymizationNotice?: boolean;
 }
 
 const TIME_PREFERENCES: Array<{ label: string; value: TimePreference }> = [
@@ -32,6 +33,7 @@ export function ProfileForm({
   initialProfile,
   isLoading,
   onSubmit,
+  showAnonymizationNotice = false,
 }: ProfileFormProps): JSX.Element {
   const [profile, setProfile] = useState<UserProfile>(initialProfile);
 
@@ -123,6 +125,12 @@ export function ProfileForm({
           <span className="text-sm font-semibold text-white">
             Speakers you want to follow
           </span>
+          {showAnonymizationNotice ? (
+            <p className="inline-flex items-center gap-2 rounded-2xl border border-cyan-300/14 bg-cyan-300/8 px-3 py-2 text-xs leading-5 text-cyan-100/84">
+              <span className="h-2 w-2 rounded-full bg-cyan-300" />
+              Speaker names are masked in this environment.
+            </p>
+          ) : null}
           <select
             multiple
             value={profile.preferredSpeakers}
