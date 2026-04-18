@@ -9,6 +9,7 @@ from typing import Any
 
 import pandas as pd
 
+from app.anonymizer import anonymize_speaker_name
 from app.models import FilterOptions, SessionRecord
 
 
@@ -203,7 +204,10 @@ def load_sessions(data_file_path: Path = DATA_FILE_PATH) -> list[SessionRecord]:
     return sessions
 
 
-def build_filter_options(sessions: list[SessionRecord]) -> FilterOptions:
+def build_filter_options(
+    sessions: list[SessionRecord],
+    anonymize_speakers: bool = False,
+) -> FilterOptions:
     """Build distinct UI filter options from normalized sessions.
 
     Args:
@@ -228,7 +232,7 @@ def build_filter_options(sessions: list[SessionRecord]) -> FilterOptions:
         ),
         speakers=sorted(
             {
-                speaker
+                anonymize_speaker_name(speaker) if anonymize_speakers else speaker
                 for session in sessions
                 for speaker in _split_speakers(session.speakers)
             }

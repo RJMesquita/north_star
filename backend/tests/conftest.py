@@ -95,4 +95,5 @@ def recommendation_service(
         sessions=sample_sessions,
         vectorizer=vectorizer,
         tfidf_matrix=tfidf_matrix,
+        anonymize_speakers=False,
     )

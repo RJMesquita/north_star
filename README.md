@@ -136,7 +136,7 @@ The repo is split into two application layers and one data source:
 
 ## API Surface
 
-Machine-readable contract: [docs/openapi.json](/home/daniel/code/dosorio79/schedulize/docs/openapi.json)
+Machine-readable contract: [docs/openapi.json](./docs/openapi.json)
 
 Regenerate it with:
 
@@ -265,6 +265,22 @@ It currently validates release readiness by:
 This workflow is CI-first. It does not deploy anywhere yet because the repo
 does not currently define a target hosting platform or deployment secrets.
 
+## Render Dev Deployment
+
+The repository now includes a repo-root [`render.yaml`](/home/daniel/code/dosorio79/schedulize/render.yaml)
+Blueprint for a `dev` staging deployment on Render.
+
+- `north-star-frontend-dev`: Render Static Site built from `frontend/`
+- `north-star-api-dev`: Render Web Service built from [`backend/Dockerfile`](/home/daniel/code/dosorio79/schedulize/backend/Dockerfile)
+- Both services track the `dev` branch and are configured to auto-deploy after
+  CI checks pass
+- The frontend expects `VITE_API_BASE_URL` to point at the backend Render URL
+- The staging backend enables `ANONYMIZE_SPEAKERS=true`
+
+Because the backend reads the conference workbook from [`data/`](/home/daniel/code/dosorio79/schedulize/data),
+the Render backend is packaged as a Docker service with repo-root build context
+instead of a root-directory-native Python service.
+
 ## Product Branding
 
 The shipped UI is branded as **North Star**.
@@ -292,4 +308,4 @@ repository public or representing it outside the current private-release scope.
 
 ## Maintainer Notes
 
-Release process notes live in [docs/release-checklist.md](/home/daniel/code/dosorio79/schedulize/docs/release-checklist.md).
+Release process notes live in [docs/release-checklist.md](./docs/release-checklist.md).
