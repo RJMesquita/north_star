@@ -277,7 +277,7 @@ Blueprint for a `dev` staging deployment on Render.
 - The frontend expects `VITE_API_BASE_URL` to point at the backend Render URL
 - The staging backend enables `ANONYMIZE_SPEAKERS=true`
 
-Because the backend reads the conference workbook from [`data/`](/home/daniel/code/dosorio79/schedulize/data),
+Because the backend reads the conference workbook from [`data/`](./data/),
 the Render backend is packaged as a Docker service with repo-root build context
 instead of a root-directory-native Python service.
 
