@@ -267,11 +267,11 @@ does not currently define a target hosting platform or deployment secrets.
 
 ## Render Dev Deployment
 
-The repository now includes a repo-root [`render.yaml`](/home/daniel/code/dosorio79/schedulize/render.yaml)
+The repository now includes a repo-root [`render.yaml`](./render.yaml)
 Blueprint for a `dev` staging deployment on Render.
 
 - `north-star-frontend-dev`: Render Static Site built from `frontend/`
-- `north-star-api-dev`: Render Web Service built from [`backend/Dockerfile`](/home/daniel/code/dosorio79/schedulize/backend/Dockerfile)
+- `north-star-api-dev`: Render Web Service built from [`backend/Dockerfile`](./backend/Dockerfile)
 - Both services track the `dev` branch and are configured to auto-deploy after
   CI checks pass
 - The frontend expects `VITE_API_BASE_URL` to point at the backend Render URL
