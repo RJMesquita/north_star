@@ -43,6 +43,20 @@ function withProfileDefaults(profile: UserProfile | null): UserProfile {
   };
 }
 
+function normalizeProfileForFilters(
+  profile: UserProfile,
+  filterOptions: FilterOptions,
+): UserProfile {
+  const availableSpeakers = new Set(filterOptions.speakers);
+
+  return {
+    ...profile,
+    preferredSpeakers: profile.preferredSpeakers.filter((speaker) =>
+      availableSpeakers.has(speaker),
+    ),
+  };
+}
+
 export function App(): JSX.Element {
   const [filters, setFilters] = useState<FilterOptions>({
     tracks: [],
@@ -70,6 +84,22 @@ export function App(): JSX.Element {
       try {
         const filterOptions = await getFilterOptions();
         setFilters(filterOptions);
+        setProfile((currentProfile) => {
+          const normalizedProfile = normalizeProfileForFilters(
+            currentProfile,
+            filterOptions,
+          );
+
+          if (
+            normalizedProfile.preferredSpeakers.length ===
+            currentProfile.preferredSpeakers.length
+          ) {
+            return currentProfile;
+          }
+
+          saveProfile(normalizedProfile);
+          return normalizedProfile;
+        });
       } catch (error) {
         setMessage(
           [

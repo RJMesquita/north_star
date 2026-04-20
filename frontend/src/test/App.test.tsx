@@ -147,6 +147,43 @@ describe("App", () => {
     expect(await screen.findByText("See your plan on the calendar")).toBeVisible();
   });
 
+  it("removes saved preferred speakers that are not in the loaded filters", async () => {
+    localStorage.setItem(
+      "schedulize.profile",
+      JSON.stringify({
+        tracks: [],
+        talkTypes: [],
+        levels: [],
+        keywords: [],
+        preferredSpeakers: ["Jane Doe", "Real Speaker Name"],
+        timePreference: "",
+        maxDurationMinutes: "",
+      }),
+    );
+    const user = userEvent.setup();
+
+    render(<App />);
+
+    await screen.findByText("Choose your conference focus");
+    await user.click(
+      screen.getByRole("button", { name: "Get recommendations" }),
+    );
+
+    await waitFor(() => {
+      expect(api.getRecommendations).toHaveBeenCalledWith({
+        tracks: [],
+        talk_types: [],
+        levels: [],
+        keywords: [],
+        preferred_speakers: ["Jane Doe"],
+        time_preference: null,
+        max_duration_minutes: null,
+        limit: 10,
+      });
+    });
+    expect(localStorage.getItem("schedulize.profile")).toContain('["Jane Doe"]');
+  });
+
   it("adds all returned sessions to the agenda in one action", async () => {
     const user = userEvent.setup();
     vi.mocked(api.getSessions).mockResolvedValue([
