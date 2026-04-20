@@ -58,7 +58,6 @@ agents.md
 Thumbs.db
 
 # Docker
-.dockerignore
 docker-compose.override.yml
 
 # Environment variables

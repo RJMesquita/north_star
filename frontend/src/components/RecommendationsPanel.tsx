@@ -7,6 +7,7 @@ interface RecommendationsPanelProps {
   isSaving: boolean;
   onAdd: (sessionId: string) => void;
   onAddAll: () => void;
+  showAnonymizationNotice?: boolean;
 }
 
 function formatScheduleLabel(
@@ -37,6 +38,7 @@ export function RecommendationsPanel({
   isSaving,
   onAdd,
   onAddAll,
+  showAnonymizationNotice = false,
 }: RecommendationsPanelProps): JSX.Element {
   const canAddAny = recommendations.some(
     (session) => !agendaIds.includes(session.session_id),
@@ -56,6 +58,12 @@ export function RecommendationsPanel({
           selected. Save individual sessions or add the whole set to sketch
           out a first pass of your agenda.
         </p>
+        {showAnonymizationNotice ? (
+          <div className="mt-4 inline-flex items-center gap-2 self-start rounded-full border border-cyan-300/16 bg-cyan-300/8 px-3 py-2 text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-cyan-200/90">
+            <span className="h-2 w-2 rounded-full bg-cyan-300" />
+            Staging speaker names are anonymized
+          </div>
+        ) : null}
         <button
           type="button"
           onClick={onAddAll}

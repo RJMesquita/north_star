@@ -8,6 +8,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
+from app.anonymizer import anonymize_speaker_name, anonymize_speakers_text
 from app.dataset import (
     DatasetLoadError,
     _build_search_document,
@@ -141,6 +142,31 @@ def test_split_speakers_handles_common_separators() -> None:
     ]
 
 
+def test_anonymize_speaker_name_is_deterministic() -> None:
+    """The same real speaker should always map to the same fake name."""
+
+    first_value = anonymize_speaker_name("Jane Doe")
+    second_value = anonymize_speaker_name("Jane Doe")
+
+    assert first_value == second_value
+    assert first_value != "Jane Doe"
+    assert len(first_value.split()) == 2
+    assert not any(character.isdigit() for character in first_value)
+
+
+def test_anonymize_speakers_text_replaces_all_speakers() -> None:
+    """Multi-speaker fields should be anonymized consistently."""
+
+    anonymized = anonymize_speakers_text("Jane Doe and Alex Roe")
+
+    assert anonymized == ", ".join(
+        [
+            anonymize_speaker_name("Jane Doe"),
+            anonymize_speaker_name("Alex Roe"),
+        ]
+    )
+
+
 def test_load_sessions_raises_for_missing_file(tmp_path: Path) -> None:
     """Missing workbooks should raise a dataset-specific error."""
 
@@ -191,3 +217,33 @@ def test_load_sessions_normalizes_rows(
     assert session.scheduled_at == datetime(2026, 9, 10, 9, 0)
     assert session.ends_at == datetime(2026, 9, 10, 9, 45)
     assert "Engineering" in session.search_document
+
+
+def test_build_filter_options_can_anonymize_speakers() -> None:
+    """Speaker filters should optionally expose fake names instead of real ones."""
+
+    sessions = [
+        SessionRecord(
+            session_id="1",
+            title="A",
+            description="",
+            speakers="Jane Doe and Alex Roe",
+            track="Engineering",
+            talk_type="Technical",
+            level="Intermediate",
+            keywords="rag",
+            scheduled_at=None,
+            ends_at=None,
+            duration_minutes=None,
+            search_document="A",
+        )
+    ]
+
+    filters = build_filter_options(sessions, anonymize_speakers=True)
+
+    assert filters.speakers == sorted(
+        [
+            anonymize_speaker_name("Jane Doe"),
+            anonymize_speaker_name("Alex Roe"),
+        ]
+    )
